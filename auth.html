@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login & Signup - FlashLearn</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header>
+    <nav class="navbar">
+      <div class="logo">⚡ FlashLearn</div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="study.html">Study</a></li>
+        <li><a href="auth.html" class="active">Login</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Auth Box Container -->
+  <main class="auth-wrapper">
+    <div class="auth-card">
+      
+      <!-- Switch Tabs -->
+      <div class="tab-buttons">
+        <button id="loginTabBtn" class="tab-btn active" onclick="showLogin()">Login</button>
+        <button id="signupTabBtn" class="tab-btn" onclick="showSignup()">Sign Up</button>
+      </div>
+
+      <!-- Login Form -->
+      <form id="loginForm" class="auth-form" onsubmit="handleLogin(event)">
+        <h2>Welcome Back</h2>
+        <div class="input-group">
+          <label for="loginEmail">Email Address</label>
+          <input type="email" id="loginEmail" placeholder="student@example.com" required>
+        </div>
+
+        <div class="input-group">
+          <label for="loginPass">Password</label>
+          <input type="password" id="loginPass" placeholder="Enter password" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">Login</button>
+      </form>
+
+      <!-- Signup Form -->
+      <form id="signupForm" class="auth-form hidden" onsubmit="handleSignup(event)">
+        <h2>Create Account</h2>
+        <div class="input-group">
+          <label for="signupName">Full Name</label>
+          <input type="text" id="signupName" placeholder="Your Name" required>
+        </div>
+
+        <div class="input-group">
+          <label for="signupEmail">Email Address</label>
+          <input type="email" id="signupEmail" placeholder="student@example.com" required>
+        </div>
+
+        <div class="input-group">
+          <label for="signupPass">Password</label>
+          <input type="password" id="signupPass" placeholder="At least 6 characters" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+      </form>
+
+      <!-- Message text for validation errors -->
+      <p id="authMessage" class="auth-msg"></p>
+    </div>
+  </main>
+
+  <footer>
+    <p>Developed by Team <strong>Webnove</strong> | CSE326 CA1 Project</p>
+  </footer>
+
+  <script src="js/auth.js"></script>
+</body>
+</html>
