@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study Session - FlashLearn</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/flashcard.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header>
+    <nav class="navbar">
+      <div class="logo">⚡ FlashLearn</div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="study.html" class="active">Study</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Study Playground -->
+  <main class="study-container">
+    
+    <!-- Top Progress Bar -->
+    <div class="study-header">
+      <a href="dashboard.html" class="back-link">← Back to Dashboard</a>
+      <div class="progress-box">
+        <span id="cardIndicator">Card 1 of 5</span>
+        <div class="progress-bar-bg">
+          <div id="progressBarFill" class="progress-bar-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3D Flashcard Element -->
+    <div class="flashcard-scene" onclick="flipCard()">
+      <div class="flashcard-inner" id="flashcardElement">
+        
+        <!-- Front Side (Question) -->
+        <div class="flashcard-face flashcard-front">
+          <span class="card-side-tag">QUESTION</span>
+          <h2 id="cardQuestion">Loading question...</h2>
+          <p class="flip-hint">Click card to reveal answer</p>
+        </div>
+
+        <!-- Back Side (Answer) -->
+        <div class="flashcard-face flashcard-back">
+          <span class="card-side-tag">ANSWER</span>
+          <h2 id="cardAnswer">Loading answer...</h2>
+          <p class="flip-hint">Click card to see question</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Feedback Controls -->
+    <div class="difficulty-controls">
+      <p>Rate your recall:</p>
+      <div class="action-buttons">
+        <button class="btn btn-diff btn-hard" onclick="recordRecall('hard')">Needs Practice</button>
+        <button class="btn btn-diff btn-easy" onclick="recordRecall('easy')">Mastered</button>
+      </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="nav-controls">
+      <button class="btn btn-secondary" onclick="prevCard()" id="prevBtn">Previous</button>
+      <button class="btn btn-primary" onclick="nextCard()" id="nextBtn">Next</button>
+    </div>
+
+    <!-- Summary Box (Hidden initially) -->
+    <div id="summaryModal" class="summary-card hidden">
+      <h2>🎉 Session Completed!</h2>
+      <p id="summaryScore">You reviewed 5 cards.</p>
+      <div class="summary-actions">
+        <button class="btn btn-primary" onclick="restartSession()">Restart Deck</button>
+        <a href="dashboard.html" class="btn btn-secondary">Dashboard</a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    <p>Developed by Team <strong>Webnove</strong> | CSE326 CA1 Project</p>
+  </footer>
+
+  <script src="js/study.js"></script>
+</body>
+</html>
