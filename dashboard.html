@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - FlashLearn</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header>
+    <nav class="navbar">
+      <div class="logo">⚡ FlashLearn</div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="dashboard.html" class="active">Dashboard</a></li>
+        <li><a href="study.html">Study</a></li>
+        <li><button onclick="handleLogout()" class="btn btn-secondary">Logout</button></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="dashboard-container">
+    
+    <!-- User Stats Section -->
+    <section class="user-banner">
+      <div>
+        <h2 id="welcomeUser">Welcome back, Student!</h2>
+        <p>Ready to practice your flashcards today?</p>
+      </div>
+      <div class="stats-row">
+        <div class="stat-badge">
+          <span class="stat-num" id="totalDecksCount">4</span>
+          <span class="stat-label">Decks</span>
+        </div>
+        <div class="stat-badge">
+          <span class="stat-num" id="cardsStudiedCount">0</span>
+          <span class="stat-label">Reviewed</span>
+        </div>
+        <div class="stat-badge">
+          <span class="stat-num">1 Day</span>
+          <span class="stat-label">Streak</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Search & Filter Controls -->
+    <section class="controls-bar">
+      <input type="text" id="searchInput" placeholder="Search decks by title..." onkeyup="filterDecks()">
+      
+      <select id="categoryFilter" onchange="filterDecks()">
+        <option value="All">All Categories</option>
+        <option value="Web Development">Web Development</option>
+        <option value="Programming">Programming</option>
+        <option value="Core CS">Core CS</option>
+      </select>
+    </section>
+
+    <!-- Decks Grid -->
+    <section class="decks-grid" id="decksContainer">
+      <!-- Cards dynamically injected by dashboard.js -->
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Developed by Team <strong>Webnove</strong> | CSE326 CA1 Project</p>
+  </footer>
+
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
