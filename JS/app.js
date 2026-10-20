@@ -1,0 +1,1 @@
+console.log("Webnove Flashcards App initialized successfully.");
