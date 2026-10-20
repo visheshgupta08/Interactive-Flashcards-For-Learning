@@ -5,38 +5,37 @@ var decksData = [
     title: "HTML5 & Semantic Tags",
     category: "Web Development",
     description: "Learn essential tags, structural elements, and forms.",
-    cardCount: 6
+    cardCount: 5
   },
   {
     id: 2,
     title: "CSS Flexbox & Box Model",
     category: "Web Development",
     description: "Master margin, padding, flex-direction, and alignment.",
-    cardCount: 5
+    cardCount: 4
   },
   {
     id: 3,
     title: "Basics of Programming",
     category: "Programming",
     description: "Variables, conditions, loops, and function syntax.",
-    cardCount: 5
+    cardCount: 4
   },
   {
     id: 4,
     title: "Internet & Networking",
     category: "Core CS",
     description: "HTTP, DNS, IP addressing, and client-server concepts.",
-    cardCount: 5
+    cardCount: 4
   }
 ];
 
-// Check login status on page load
 window.onload = function() {
   checkUserSession();
   renderDecks(decksData);
 };
 
-// User session management
+// Check logged in user
 function checkUserSession() {
   var userAccount = localStorage.getItem("userAccount");
   var welcomeText = document.getElementById("welcomeUser");
@@ -47,7 +46,7 @@ function checkUserSession() {
   }
 }
 
-// Render decks dynamically into DOM
+// Render deck cards into container
 function renderDecks(list) {
   var container = document.getElementById("decksContainer");
   container.innerHTML = "";
@@ -96,13 +95,13 @@ function filterDecks() {
   renderDecks(filteredList);
 }
 
-// Start study session
+// Save active deck ID and redirect to study page
 function startStudySession(deckId) {
   localStorage.setItem("activeDeckId", deckId);
   window.location.href = "study.html";
 }
 
-// Logout function
+// Logout user
 function handleLogout() {
   localStorage.removeItem("isLoggedIn");
   window.location.href = "auth.html";
