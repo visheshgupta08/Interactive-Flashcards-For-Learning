@@ -9,7 +9,7 @@
 </head>
 <body>
 
-  <!-- Navbar -->
+  <!-- Navigation Bar -->
   <header>
     <nav class="navbar">
       <div class="logo">⚡ FlashLearn</div>
@@ -22,55 +22,64 @@
     </nav>
   </header>
 
-  <!-- Auth Box Container -->
+  <!-- Auth Card Wrapper -->
   <main class="auth-wrapper">
     <div class="auth-card">
       
-      <!-- Switch Tabs -->
-      <div class="tab-buttons">
-        <button id="loginTabBtn" class="tab-btn active" onclick="showLogin()">Login</button>
-        <button id="signupTabBtn" class="tab-btn" onclick="showSignup()">Sign Up</button>
+      <!-- Tab Switcher -->
+      <div class="auth-tabs">
+        <button id="loginTabBtn" class="tab-btn active" onclick="showLogin()" type="button">Login</button>
+        <button id="signupTabBtn" class="tab-btn" onclick="showSignup()" type="button">Sign Up</button>
       </div>
 
-      <!-- Login Form -->
-      <form id="loginForm" class="auth-form" onsubmit="handleLogin(event)">
+      <!-- Alert Message Box -->
+      <div id="authMessage" class="auth-msg"></div>
+
+      <!-- Login Form Container -->
+      <div id="loginForm" class="form-container">
         <h2>Welcome Back</h2>
-        <div class="input-group">
-          <label for="loginEmail">Email Address</label>
-          <input type="email" id="loginEmail" placeholder="student@example.com" required>
-        </div>
+        <p class="auth-subtitle">Log in to track your learning progress</p>
 
-        <div class="input-group">
-          <label for="loginPass">Password</label>
-          <input type="password" id="loginPass" placeholder="Enter password" required>
-        </div>
+        <form onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label for="loginEmail">Email Address</label>
+            <input type="email" id="loginEmail" placeholder="student@example.com" required>
+          </div>
 
-        <button type="submit" class="btn btn-primary btn-block">Login</button>
-      </form>
+          <div class="form-group">
+            <label for="loginPass">Password</label>
+            <input type="password" id="loginPass" placeholder="Enter password" required>
+          </div>
 
-      <!-- Signup Form -->
-      <form id="signupForm" class="auth-form hidden" onsubmit="handleSignup(event)">
+          <button type="submit" class="btn btn-primary btn-block">Login</button>
+        </form>
+      </div>
+
+      <!-- Sign Up Form Container (Default Hidden) -->
+      <div id="signupForm" class="form-container hidden">
         <h2>Create Account</h2>
-        <div class="input-group">
-          <label for="signupName">Full Name</label>
-          <input type="text" id="signupName" placeholder="Your Name" required>
-        </div>
+        <p class="auth-subtitle">Join FlashLearn to master your subjects</p>
 
-        <div class="input-group">
-          <label for="signupEmail">Email Address</label>
-          <input type="email" id="signupEmail" placeholder="student@example.com" required>
-        </div>
+        <form onsubmit="handleSignup(event)">
+          <div class="form-group">
+            <label for="signupName">Full Name</label>
+            <input type="text" id="signupName" placeholder="Your Name" required>
+          </div>
 
-        <div class="input-group">
-          <label for="signupPass">Password</label>
-          <input type="password" id="signupPass" placeholder="At least 6 characters" required>
-        </div>
+          <div class="form-group">
+            <label for="signupEmail">Email Address</label>
+            <input type="email" id="signupEmail" placeholder="student@example.com" required>
+          </div>
 
-        <button type="submit" class="btn btn-primary btn-block">Create Account</button>
-      </form>
+          <div class="form-group">
+            <label for="signupPass">Password</label>
+            <input type="password" id="signupPass" placeholder="At least 6 characters" required>
+          </div>
 
-      <!-- Message text for validation errors -->
-      <p id="authMessage" class="auth-msg"></p>
+          <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+        </form>
+      </div>
+
     </div>
   </main>
 

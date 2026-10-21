@@ -1,5 +1,5 @@
-// Flashcards database mapped by Deck ID
-var deckCardsData = {
+// Default seed flashcards mapped by Deck ID
+var defaultCards = {
   1: [
     { question: "What does HTML stand for?", answer: "HyperText Markup Language" },
     { question: "Which tag is used for the largest heading?", answer: "<h1>" },
@@ -28,30 +28,40 @@ var deckCardsData = {
 };
 
 var currentDeckCards = [];
+var currentDeckId = "1";
 var currentIndex = 0;
 var isFlipped = false;
 var masteredCount = 0;
 
-// Initialize on page load
 window.onload = function() {
   loadActiveDeck();
 };
 
-// Find and load cards for active deck
+// Load cards from LocalStorage or Fallback to Default Seeds
 function loadActiveDeck() {
   var savedDeckId = localStorage.getItem("activeDeckId");
-
-  if (!savedDeckId || !deckCardsData[savedDeckId]) {
-    savedDeckId = "1";
+  if (savedDeckId) {
+    currentDeckId = savedDeckId;
   }
 
-  currentDeckCards = deckCardsData[savedDeckId];
+  // Check if custom deck cards exist in localStorage
+  var storedCustomDecks = localStorage.getItem("customFlashcards");
+  var allDecks = defaultCards;
+
+  if (storedCustomDecks) {
+    allDecks = JSON.parse(storedCustomDecks);
+  } else {
+    // Save defaults initially
+    localStorage.setItem("customFlashcards", JSON.stringify(defaultCards));
+  }
+
+  currentDeckCards = allDecks[currentDeckId] || defaultCards[1];
   currentIndex = 0;
   masteredCount = 0;
   loadCard(currentIndex);
 }
 
-// Display card data on UI
+// Display Card on UI
 function loadCard(index) {
   var cardElement = document.getElementById("flashcardElement");
   cardElement.classList.remove("is-flipped");
@@ -78,14 +88,14 @@ function loadCard(index) {
   }
 }
 
-// Flip card toggle
+// Flip Card Action
 function flipCard() {
   var cardElement = document.getElementById("flashcardElement");
   cardElement.classList.toggle("is-flipped");
   isFlipped = !isFlipped;
 }
 
-// Next card
+// Next Card
 function nextCard() {
   if (currentIndex < currentDeckCards.length - 1) {
     currentIndex = currentIndex + 1;
@@ -95,7 +105,7 @@ function nextCard() {
   }
 }
 
-// Previous card
+// Previous Card
 function prevCard() {
   if (currentIndex > 0) {
     currentIndex = currentIndex - 1;
@@ -103,7 +113,7 @@ function prevCard() {
   }
 }
 
-// Record recall difficulty
+// Difficulty Tracker
 function recordRecall(level) {
   if (level === "easy") {
     masteredCount = masteredCount + 1;
@@ -111,7 +121,7 @@ function recordRecall(level) {
   nextCard();
 }
 
-// Session completion summary
+// Summary Modal
 function showSummary() {
   document.querySelector(".flashcard-scene").classList.add("hidden");
   document.querySelector(".difficulty-controls").classList.add("hidden");
@@ -124,7 +134,7 @@ function showSummary() {
     "You completed all " + currentDeckCards.length + " cards! Mastered: " + masteredCount;
 }
 
-// Restart session
+// Restart Session
 function restartSession() {
   currentIndex = 0;
   masteredCount = 0;
@@ -135,4 +145,47 @@ function restartSession() {
   document.getElementById("summaryModal").classList.add("hidden");
 
   loadCard(currentIndex);
+}
+
+// Modal Controls
+function openAddCardModal() {
+  document.getElementById("addCardModal").classList.remove("hidden");
+}
+
+function closeAddCardModal() {
+  document.getElementById("addCardModal").classList.add("hidden");
+  document.getElementById("newQuestion").value = "";
+  document.getElementById("newAnswer").value = "";
+}
+
+// Add New Card and Persist in LocalStorage
+function handleAddNewCard(event) {
+  event.preventDefault();
+
+  var questionInput = document.getElementById("newQuestion").value.trim();
+  var answerInput = document.getElementById("newAnswer").value.trim();
+
+  if (!questionInput || !answerInput) return;
+
+  var newCard = { question: questionInput, answer: answerInput };
+
+  // Fetch current stored decks
+  var storedCustomDecks = JSON.parse(localStorage.getItem("customFlashcards")) || defaultCards;
+
+  if (!storedCustomDecks[currentDeckId]) {
+    storedCustomDecks[currentDeckId] = [];
+  }
+
+  // Push new card to current deck
+  storedCustomDecks[currentDeckId].push(newCard);
+
+  // Save back to LocalStorage
+  localStorage.setItem("customFlashcards", JSON.stringify(storedCustomDecks));
+
+  // Update current session array
+  currentDeckCards = storedCustomDecks[currentDeckId];
+
+  closeAddCardModal();
+  loadCard(currentDeckCards.length - 1);
+  currentIndex = currentDeckCards.length - 1;
 }
