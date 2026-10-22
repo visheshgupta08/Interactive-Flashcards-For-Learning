@@ -5,8 +5,8 @@ An interactive, responsive client-side web application designed to enhance learn
 ---
 
 ## 🌐 Live Demo
-- **Live Deployment:** [https://visheshgupta08.github.io/Interactive-Flashcards-For-Learning/](https://visheshgupta08.github.io/Interactive-Flashcards-For-Learning/)
-- **Repository:** [https://github.com/visheshgupta08/Interactive-Flashcards-For-Learning](https://github.com/visheshgupta08/Interactive-Flashcards-For-Learning)
+- **Live Deployment:** https://visheshgupta08.github.io/Interactive-Flashcards-For-Learning/
+- **Repository:** https://github.com/visheshgupta08/Interactive-Flashcards-For-Learning
 
 ---
 
@@ -79,6 +79,7 @@ Interactive-Flashcards/
     cd Interactive-Flashcards-For-Learning
     ```
 3. **Run the Project:**
-    Open index.html in your browser.
     
+    Open index.html in your browser.
+
     Alternatively, use the VS Code Live Server extension for local testing.
