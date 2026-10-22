@@ -79,6 +79,7 @@ body {
 
 /* Hero Section */
 .hero {
+  min-height: 50vh;
   padding: 5rem 8%;
   text-align: center;
   background: linear-gradient(180deg, #ffffff 0%, #eef2ff 100%);
