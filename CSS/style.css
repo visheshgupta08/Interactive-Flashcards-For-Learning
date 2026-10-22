@@ -158,7 +158,9 @@ footer {
 
 .stats-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 1.2rem;
+  justify-content: space-between;
 }
 
 .stat-badge {

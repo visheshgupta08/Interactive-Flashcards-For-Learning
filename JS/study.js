@@ -53,6 +53,16 @@ var masteredCount = 0;
 window.onload = function() {
   loadActiveDeck();
   setupKeyboardNavigation(); // Keyboard controls ON
+  // Navbar Login/Logout toggle logic
+  var navAuth = document.getElementById("navAuthLink");
+  if (navAuth && localStorage.getItem("isLoggedIn") === "true") {
+    navAuth.innerText = "Logout";
+    navAuth.href = "#";
+    navAuth.onclick = function() {
+      localStorage.removeItem("isLoggedIn");
+      window.location.href = "auth.html";
+    };
+  }
 };
 
 // Load cards from LocalStorage or Fallback to Default Seeds
@@ -159,11 +169,20 @@ function prevCard() {
   }
 }
 
-// Difficulty Tracker
+// Har card ka recall status track krna
+var cardProgress = {};
+
 function recordRecall(level) {
-  if (level === "easy") {
-    masteredCount = masteredCount + 1;
+  cardProgress[currentIndex] = level;
+
+  // Har card index par sirf ek baar mastered count hoga
+  masteredCount = 0;
+  for (var key in cardProgress) {
+    if (cardProgress[key] === "easy") {
+      masteredCount++;
+    }
   }
+
   nextCard();
 }
 
@@ -201,7 +220,7 @@ function showSummary() {
 function restartSession() {
   currentIndex = 0;
   masteredCount = 0;
-
+  cardProgress = {}; //Reset Tracking
   document.querySelector(".flashcard-scene").classList.remove("hidden");
   document.querySelector(".difficulty-controls").classList.remove("hidden");
   document.querySelector(".nav-controls").classList.remove("hidden");
