@@ -1,4 +1,9 @@
-// Default seed flashcards mapped by Deck ID
+// 1. Auth Protection: Agar login nahi hai toh Login page bhej do
+if (localStorage.getItem("isLoggedIn") !== "true") {
+  window.location.href = "auth.html";
+}
+
+// Default seed flashcards mapped by Deck ID (Ab poore 6 Decks)
 var defaultCards = {
   1: [
     { question: "What does HTML stand for?", answer: "HyperText Markup Language" },
@@ -24,6 +29,18 @@ var defaultCards = {
     { question: "What is the standard port for HTTPS?", answer: "Port 443" },
     { question: "What is the role of DNS in networking?", answer: "Translates domain names to IP addresses" },
     { question: "What does IP stand for?", answer: "Internet Protocol" }
+  ],
+  5: [
+    { question: "Which data structure works on LIFO principle?", answer: "Stack (Last In First Out)" },
+    { question: "Which data structure works on FIFO principle?", answer: "Queue (First In First Out)" },
+    { question: "What is the time complexity of array index access?", answer: "O(1) - Constant Time" },
+    { question: "In which list does each node point to next and previous?", answer: "Doubly Linked List" }
+  ],
+  6: [
+    { question: "What does SQL stand for?", answer: "Structured Query Language" },
+    { question: "Which command retrieves data from a database?", answer: "SELECT statement" },
+    { question: "What uniquely identifies each record in a table?", answer: "Primary Key" },
+    { question: "Which clause is used to filter records in SQL?", answer: "WHERE clause" }
   ]
 };
 
@@ -35,6 +52,7 @@ var masteredCount = 0;
 
 window.onload = function() {
   loadActiveDeck();
+  setupKeyboardNavigation(); // Keyboard controls ON
 };
 
 // Load cards from LocalStorage or Fallback to Default Seeds
@@ -44,6 +62,13 @@ function loadActiveDeck() {
     currentDeckId = savedDeckId;
   }
 
+  // 2. Study page par Deck ka Title dikhana
+  var savedTitle = localStorage.getItem("activeDeckTitle") || "Flashcard Session";
+  var headingElement = document.getElementById("currentDeckHeading");
+  if (headingElement) {
+    headingElement.innerText = "Studying: " + savedTitle;
+  }
+
   // Check if custom deck cards exist in localStorage
   var storedCustomDecks = localStorage.getItem("customFlashcards");
   var allDecks = defaultCards;
@@ -51,7 +76,6 @@ function loadActiveDeck() {
   if (storedCustomDecks) {
     allDecks = JSON.parse(storedCustomDecks);
   } else {
-    // Save defaults initially
     localStorage.setItem("customFlashcards", JSON.stringify(defaultCards));
   }
 
@@ -95,21 +119,43 @@ function flipCard() {
   isFlipped = !isFlipped;
 }
 
-// Next Card
+// Next Card smoothly handle flipping
 function nextCard() {
   if (currentIndex < currentDeckCards.length - 1) {
-    currentIndex = currentIndex + 1;
-    loadCard(currentIndex);
+    var cardElement = document.getElementById("flashcardElement");
+
+    if (isFlipped) {
+      cardElement.classList.remove("is-flipped");
+      isFlipped = false;
+      setTimeout(function() {
+        currentIndex = currentIndex + 1;
+        loadCard(currentIndex);
+      }, 300);
+    } else {
+      currentIndex = currentIndex + 1;
+      loadCard(currentIndex);
+    }
   } else {
     showSummary();
   }
 }
 
-// Previous Card
+// Previous Card smoothly handle flipping
 function prevCard() {
   if (currentIndex > 0) {
-    currentIndex = currentIndex - 1;
-    loadCard(currentIndex);
+    var cardElement = document.getElementById("flashcardElement");
+
+    if (isFlipped) {
+      cardElement.classList.remove("is-flipped");
+      isFlipped = false;
+      setTimeout(function() {
+        currentIndex = currentIndex - 1;
+        loadCard(currentIndex);
+      }, 300);
+    } else {
+      currentIndex = currentIndex - 1;
+      loadCard(currentIndex);
+    }
   }
 }
 
@@ -119,6 +165,23 @@ function recordRecall(level) {
     masteredCount = masteredCount + 1;
   }
   nextCard();
+}
+
+// 3. Keyboard Shortcuts (Spacebar se flip, Arrow keys se Next/Prev)
+function setupKeyboardNavigation() {
+  document.addEventListener("keydown", function(e) {
+    var modal = document.getElementById("addCardModal");
+    if (modal && !modal.classList.contains("hidden")) return;
+
+    if (e.code === "Space") {
+      e.preventDefault();
+      flipCard();
+    } else if (e.code === "ArrowRight") {
+      nextCard();
+    } else if (e.code === "ArrowLeft") {
+      prevCard();
+    }
+  });
 }
 
 // Summary Modal
@@ -158,6 +221,17 @@ function closeAddCardModal() {
   document.getElementById("newAnswer").value = "";
 }
 
+// 4. Toast Notification popup
+function showToast(message) {
+  var toast = document.getElementById("toast");
+  if (!toast) return;
+  toast.innerText = message;
+  toast.classList.remove("hidden");
+  setTimeout(function() {
+    toast.classList.add("hidden");
+  }, 2200);
+}
+
 // Add New Card and Persist in LocalStorage
 function handleAddNewCard(event) {
   event.preventDefault();
@@ -169,23 +243,21 @@ function handleAddNewCard(event) {
 
   var newCard = { question: questionInput, answer: answerInput };
 
-  // Fetch current stored decks
   var storedCustomDecks = JSON.parse(localStorage.getItem("customFlashcards")) || defaultCards;
 
   if (!storedCustomDecks[currentDeckId]) {
     storedCustomDecks[currentDeckId] = [];
   }
 
-  // Push new card to current deck
   storedCustomDecks[currentDeckId].push(newCard);
-
-  // Save back to LocalStorage
   localStorage.setItem("customFlashcards", JSON.stringify(storedCustomDecks));
 
-  // Update current session array
   currentDeckCards = storedCustomDecks[currentDeckId];
 
   closeAddCardModal();
   loadCard(currentDeckCards.length - 1);
   currentIndex = currentDeckCards.length - 1;
+
+  // 5. Success Popup message trigger
+  showToast("Flashcard added successfully!");
 }

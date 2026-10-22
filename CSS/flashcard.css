@@ -1,208 +1,201 @@
-/* Study Container */
+/* Container & Wrapper */
 .study-container {
-  max-width: 700px;
+  max-width: 650px;
   margin: 2rem auto;
   padding: 0 1.5rem;
   text-align: center;
 }
 
+/* Top Progress Header */
 .study-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
-  flex-wrap: wrap;
   gap: 1rem;
 }
 
-.back-link {
-  text-decoration: none;
-  color: #4f46e5;
-  font-weight: 600;
-  font-size: 0.95rem;
-}
-
 .progress-box {
-  width: 220px;
-  text-align: right;
+  flex: 1;
+  text-align: left;
 }
 
 #cardIndicator {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: #64748b;
   display: block;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.4rem;
 }
 
 .progress-bar-bg {
   width: 100%;
   height: 8px;
   background-color: #e2e8f0;
-  border-radius: 10px;
+  border-radius: 999px;
   overflow: hidden;
 }
 
 .progress-bar-fill {
-  width: 20%;
   height: 100%;
+  width: 20%;
   background-color: #4f46e5;
   transition: width 0.3s ease;
 }
 
-/* 3D Flip Flashcard Scene */
+/* 3D Flashcard Setup */
 .flashcard-scene {
+  perspective: 1000px;
   width: 100%;
   height: 320px;
-  perspective: 1000px;
+  margin: 0 auto 2rem auto;
   cursor: pointer;
-  margin-bottom: 2rem;
 }
 
-.flashcard-inner {
-  position: relative;
+.flashcard {
   width: 100%;
   height: 100%;
-  text-align: center;
-  transition: transform 0.6s;
+  position: relative;
   transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
 }
 
-.flashcard-inner.is-flipped {
+.flashcard.is-flipped {
   transform: rotateY(180deg);
 }
 
-.flashcard-face {
+.card-face {
   position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  border-radius: 12px;
-  padding: 2.5rem;
+  -webkit-backface-visibility: hidden;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 2.5rem 2rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e2e8f0;
+  box-sizing: border-box;
 }
 
-.flashcard-front {
-  background-color: #ffffff;
-  color: #1e293b;
-}
-
-.flashcard-back {
-  background-color: #f1f5f9;
-  color: #0f172a;
+.card-face.card-back {
   transform: rotateY(180deg);
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
 }
 
-.card-side-tag {
+.card-badge {
   font-size: 0.75rem;
   font-weight: 700;
-  letter-spacing: 1px;
-  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  background: #e0e7ff;
+  color: #4338ca;
 }
 
-.flashcard-face h2 {
-  font-size: 1.4rem;
+.card-face.card-back .card-badge {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.card-text {
+  font-size: 1.35rem;
   font-weight: 600;
+  color: #1e293b;
+  line-height: 1.5;
+  margin: auto 0;
 }
 
 .flip-hint {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: #94a3b8;
+  font-style: italic;
 }
 
-/* Difficulty & Action Buttons */
-.difficulty-controls {
-  margin-bottom: 1.5rem;
-}
-
-.difficulty-controls p {
-  font-size: 0.9rem;
-  color: #64748b;
-  margin-bottom: 0.6rem;
-}
-
-.action-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-}
-
-.btn-diff {
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-}
-
-.btn-hard {
-  background-color: #fee2e2;
-  color: #dc2626;
-}
-
-.btn-hard:hover {
-  background-color: #fecaca;
-}
-
-.btn-easy {
-  background-color: #dcfce7;
-  color: #16a34a;
-}
-
-.btn-easy:hover {
-  background-color: #bbf7d0;
-}
-
+/* Nav Controls (Previous & Next) */
 .nav-controls {
   display: flex;
   justify-content: center;
+  align-items: center;
+  gap: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.nav-controls .btn {
+  min-width: 110px;
+}
+
+/* Difficulty Tracker Controls */
+.difficulty-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1.2rem;
+  border-top: 1px dashed #e2e8f0;
+}
+
+.diff-btn {
+  padding: 0.5rem 1.2rem;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.diff-btn.hard {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+}
+
+.diff-btn.hard:hover {
+  background-color: #fecaca;
+}
+
+.diff-btn.easy {
+  background-color: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+}
+
+.diff-btn.easy:hover {
+  background-color: #bbf7d0;
 }
 
 /* Summary Card */
 .summary-card {
   background: #ffffff;
+  padding: 3rem 2rem;
+  border-radius: 16px;
   border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 2.5rem;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-  margin-top: 1.5rem;
 }
 
 .summary-card h2 {
+  font-size: 1.8rem;
   color: #1e293b;
   margin-bottom: 0.8rem;
 }
 
 .summary-card p {
   color: #64748b;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.8rem;
 }
 
 .summary-actions {
   display: flex;
   justify-content: center;
   gap: 1rem;
-}
-/* Top Action Bar */
-.study-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 520px;
-  margin: 0 auto 1.5rem auto;
-  gap: 1rem;
-}
-
-.progress-box {
-  flex: 1;
 }
 
 /* Modal Popup Styles */
@@ -227,6 +220,7 @@
   width: 100%;
   max-width: 440px;
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  text-align: left;
 }
 
 .modal-header {
@@ -254,4 +248,22 @@
   justify-content: flex-end;
   gap: 0.8rem;
   margin-top: 1.5rem;
+}
+
+.hidden {
+  display: none !important;
+}
+/* Toast Notification */
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background-color: #10b981;
+  color: #ffffff;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  z-index: 2000;
 }
