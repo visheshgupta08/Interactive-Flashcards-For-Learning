@@ -38,7 +38,7 @@ An interactive, responsive client-side web application designed to enhance learn
 ## 🛠️ Tech Stack
 
 - **Markup:** HTML5 (Semantic Structure)
-- **Styling:** CSS3 (Flexbox, CSS Variables, 3D Transforms, Responsive Design)
+- **Styling:** CSS3 (Flexbox, 3D Transforms, Responsive Design)
 - **Scripting:** Vanilla JavaScript (ES6, DOM Manipulation, Event Listeners)
 - **Storage:** Web Storage API (`localStorage`)
 

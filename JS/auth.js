@@ -18,11 +18,13 @@ function showSignup() {
 
 function clearMessage() {
   var msg = document.getElementById("authMessage");
-  msg.innerText = "";
-  msg.style.color = "";
+  if (msg) {
+    msg.innerText = "";
+    msg.style.color = "";
+  }
 }
 
-// Signup function
+// Signup function (Multi-User Support)
 function handleSignup(event) {
   event.preventDefault(); // page reload hone se rokta hai
 
@@ -38,15 +40,34 @@ function handleSignup(event) {
     return;
   }
 
-  // User object
-  var user = {
+  // 1. Existing users list fetch karo ya empty array initialize karo
+  var users = JSON.parse(localStorage.getItem("usersList")) || [];
+
+  // 2. Check duplicate email
+  var isEmailTaken = users.some(function(u) {
+    return u.email.toLowerCase() === email.toLowerCase();
+  });
+
+  if (isEmailTaken) {
+    msg.innerText = "This email is already registered! Please login.";
+    msg.style.color = "red";
+    return;
+  }
+
+  // 3. Naya user create karo (Pehla user automatic admin)
+  var newUser = {
     name: name,
     email: email,
-    password: pass
+    password: pass,
+    role: users.length === 0 ? "admin" : "user"
   };
 
-  // localStorage mein save karna
-  localStorage.setItem("userAccount", JSON.stringify(user));
+  // 4. Array mein push karo aur save karo
+  users.push(newUser);
+  localStorage.setItem("usersList", JSON.stringify(users));
+
+  // 5. Active session set karo (backward compatibility ke sath)
+  localStorage.setItem("userAccount", JSON.stringify(newUser));
   localStorage.setItem("isLoggedIn", "true");
 
   msg.innerText = "Account created successfully! Redirecting...";
@@ -57,7 +78,7 @@ function handleSignup(event) {
   }, 1200);
 }
 
-// Login function
+// Login function (Multi-User Authentication)
 function handleLogin(event) {
   event.preventDefault();
 
@@ -65,21 +86,33 @@ function handleLogin(event) {
   var pass = document.getElementById("loginPass").value;
   var msg = document.getElementById("authMessage");
 
-  // LocalStorage se saved user nikalna
-  var savedUserData = localStorage.getItem("userAccount");
+  // Users list fetch karo
+  var users = JSON.parse(localStorage.getItem("usersList")) || [];
 
-  if (!savedUserData) {
+  // Fallback: agar kisi purane single user ka data "userAccount" mein ho aur list mein na ho
+  if (users.length === 0) {
+    var legacyUser = localStorage.getItem("userAccount");
+    if (legacyUser) {
+      users.push(JSON.parse(legacyUser));
+      localStorage.setItem("usersList", JSON.stringify(users));
+    }
+  }
+
+  if (users.length === 0) {
     msg.innerText = "No account found. Please sign up first!";
     msg.style.color = "red";
     return;
   }
 
-  var savedUser = JSON.parse(savedUserData);
+  // Check matching credentials
+  var foundUser = users.find(function(u) {
+    return u.email.toLowerCase() === email.toLowerCase() && u.password === pass;
+  });
 
-  // Match email and password
-  if (savedUser.email === email && savedUser.password === pass) {
+  if (foundUser) {
     localStorage.setItem("isLoggedIn", "true");
-    msg.innerText = "Login successful! Redirecting...";
+    localStorage.setItem("userAccount", JSON.stringify(foundUser)); // active session user
+    msg.innerText = "Welcome back, " + foundUser.name + "! Redirecting...";
     msg.style.color = "green";
 
     setTimeout(function() {
