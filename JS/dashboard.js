@@ -17,7 +17,7 @@ var availableDecks = [
     title: "CSS Box Model & Flexbox",
     category: "Web Development",
     desc: "Margin, padding, flex container, alignment, and grid.",
-    cardCount: 5
+    cardCount: 4
   },
   {
     id: "3",
@@ -51,6 +51,8 @@ var availableDecks = [
 
 window.onload = function() {
   loadUserProfile();
+  syncCustomDeckCounts(); // Custom cards add hone par count update karega
+  updateDashboardStats(); // Real analytics render karega
   renderDecks(availableDecks);
   setupFilterEvents();
 };
@@ -67,7 +69,64 @@ function loadUserProfile() {
   }
 }
 
-// 2. Dynamic Deck Renderer
+// Custom added cards check karke real cardCount update karna
+function syncCustomDeckCounts() {
+  var storedCustomDecks = localStorage.getItem("customFlashcards");
+  if (storedCustomDecks) {
+    try {
+      var parsedDecks = JSON.parse(storedCustomDecks);
+      availableDecks.forEach(function(deck) {
+        if (parsedDecks[deck.id] && Array.isArray(parsedDecks[deck.id])) {
+          deck.cardCount = parsedDecks[deck.id].length;
+        }
+      });
+    } catch (e) {
+      console.error("Could not sync custom flashcards", e);
+    }
+  }
+}
+
+// 2. Dynamic Real Stats Handler (Total Decks, Reviewed, Streak)
+function updateDashboardStats() {
+  // A. Total Decks count
+  var totalDecksEl = document.getElementById("totalDecksStat");
+  if (totalDecksEl) {
+    totalDecksEl.innerText = availableDecks.length;
+  }
+
+  // B. Cards Reviewed count (study.js se track hota hai)
+  var reviewedEl = document.getElementById("totalReviewedStat");
+  var reviewedCount = localStorage.getItem("cardsReviewed") || "0";
+  if (reviewedEl) {
+    reviewedEl.innerText = reviewedCount;
+  }
+
+  // C. Daily Study Streak (Date-based dynamic tracking)
+  var streakEl = document.getElementById("studyStreakStat");
+  if (streakEl) {
+    var lastStudyDate = localStorage.getItem("lastStudyDate");
+    var currentStreak = parseInt(localStorage.getItem("studyStreak") || "0", 10);
+    var today = new Date().toISOString().split("T")[0];
+
+    if (lastStudyDate) {
+      var yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      var yesterdayStr = yesterday.toISOString().split("T")[0];
+
+      // Agar streak break ho gayi hai (aaj ya kal padhai nahi hui)
+      if (lastStudyDate !== today && lastStudyDate !== yesterdayStr) {
+        currentStreak = 0;
+        localStorage.setItem("studyStreak", "0");
+      }
+    } else {
+      currentStreak = 0;
+    }
+
+    streakEl.innerText = currentStreak + (currentStreak === 1 ? " Day" : " Days");
+  }
+}
+
+// 3. Dynamic Deck Renderer
 function renderDecks(decksToDisplay) {
   var container = document.getElementById("decksContainer");
   if (!container) return;
@@ -98,7 +157,7 @@ function renderDecks(decksToDisplay) {
   });
 }
 
-// 3. Search & Category Filter Logic
+// 4. Search & Category Filter Logic
 function setupFilterEvents() {
   var searchInput = document.getElementById("searchInput");
   var categoryFilter = document.getElementById("categoryFilter");
@@ -124,15 +183,16 @@ function setupFilterEvents() {
   }
 }
 
-// 4. Study Page Redirect with Deck ID and Title
+// 5. Study Page Redirect with Deck ID and Title
 function startStudy(deckId, deckTitle) {
   localStorage.setItem("activeDeckId", deckId);
   localStorage.setItem("activeDeckTitle", deckTitle || "Flashcard Session");
   window.location.href = "study.html";
 }
 
-// 5. Logout Handler
+// 6. Logout Handler
 function handleLogout() {
   localStorage.removeItem("isLoggedIn");
+  localStorage.removeItem("userAccount");
   window.location.href = "auth.html";
 }

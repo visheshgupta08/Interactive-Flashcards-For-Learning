@@ -3,6 +3,34 @@ if (localStorage.getItem("isLoggedIn") !== "true") {
   window.location.href = "auth.html";
 }
 
+// Analytics Tracker: Review counts aur daily streak localStorage mein update karna
+function trackCardReview() {
+  // 1. Cards Reviewed count increment
+  var count = parseInt(localStorage.getItem("cardsReviewed") || "0", 10);
+  localStorage.setItem("cardsReviewed", (count + 1).toString());
+
+  // 2. Study Streak update (Date-based tracking)
+  var today = new Date().toISOString().split("T")[0];
+  var lastDate = localStorage.getItem("lastStudyDate");
+
+  if (lastDate !== today) {
+    var yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    var yesterdayStr = yesterday.toISOString().split("T")[0];
+
+    var currentStreak = parseInt(localStorage.getItem("studyStreak") || "0", 10);
+
+    if (lastDate === yesterdayStr) {
+      currentStreak += 1;
+    } else {
+      currentStreak = 1; // Streak fresh start
+    }
+
+    localStorage.setItem("studyStreak", currentStreak.toString());
+    localStorage.setItem("lastStudyDate", today);
+  }
+}
+
 // Default seed flashcards mapped by Deck ID (Ab poore 6 Decks)
 var defaultCards = {
   1: [
@@ -60,6 +88,7 @@ window.onload = function() {
     navAuth.href = "#";
     navAuth.onclick = function() {
       localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("userAccount");
       window.location.href = "auth.html";
     };
   }
@@ -127,6 +156,11 @@ function flipCard() {
   var cardElement = document.getElementById("flashcardElement");
   cardElement.classList.toggle("is-flipped");
   isFlipped = !isFlipped;
+
+  // Har baar jab card reveal hota hai tab review track karo
+  if (isFlipped) {
+    trackCardReview();
+  }
 }
 
 // Next Card smoothly handle flipping
@@ -183,6 +217,11 @@ function recordRecall(level) {
     }
   }
 
+  // Answer submit hone par bhi count track karo agar flip nahi kiya ho
+  if (!isFlipped) {
+    trackCardReview();
+  }
+
   nextCard();
 }
 
@@ -220,7 +259,7 @@ function showSummary() {
 function restartSession() {
   currentIndex = 0;
   masteredCount = 0;
-  cardProgress = {}; //Reset Tracking
+  cardProgress = {}; // Reset Tracking
   document.querySelector(".flashcard-scene").classList.remove("hidden");
   document.querySelector(".difficulty-controls").classList.remove("hidden");
   document.querySelector(".nav-controls").classList.remove("hidden");
