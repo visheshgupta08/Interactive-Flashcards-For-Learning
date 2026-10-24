@@ -3,6 +3,15 @@ if (localStorage.getItem("isLoggedIn") !== "true") {
   window.location.href = "auth.html";
 }
 
+// Helper function: Local Timezone date
+function getLocalDateString(d) {
+  var date = d || new Date();
+  var year = date.getFullYear();
+  var month = String(date.getMonth() + 1).padStart(2, "0");
+  var day = String(date.getDate()).padStart(2, "0");
+  return year + "-" + month + "-" + day;
+}
+
 // 6 Decks ka data array (Dynamically inject karne ke liye)
 var availableDecks = [
   {

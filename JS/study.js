@@ -6,6 +6,15 @@ if (localStorage.getItem("isLoggedIn") !== "true") {
 // Session mein kaunse cards padhe ja chuke hain unko track karne ke liye
 var reviewedCardIndices = [];
 
+// Helper function: Local Indian Timezone (YYYY-MM-DD) date string
+function getLocalDateString(d) {
+  var date = d || new Date();
+  var year = date.getFullYear();
+  var month = String(date.getMonth() + 1).padStart(2, "0");
+  var day = String(date.getDate()).padStart(2, "0");
+  return year + "-" + month + "-" + day;
+}
+
 // Analytics Tracker: User-specific review counts aur streak localStorage mein update karna
 function trackCardReview() {
   // 1. Check karo ki yeh card is session mein pehle review hua ya nahi
@@ -135,7 +144,7 @@ function loadActiveDeck() {
     localStorage.setItem("customFlashcards", JSON.stringify(defaultCards));
   }
 
-  currentDeckCards = allDecks[currentDeckId] || defaultCards[1];
+  currentDeckCards = allDecks[currentDeckId] || defaultCards[currentDeckId] || [];
   currentIndex = 0;
   masteredCount = 0;
   reviewedCardIndices = []; // Naye deck ya session ke liye reset

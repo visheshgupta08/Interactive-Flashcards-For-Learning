@@ -59,7 +59,7 @@ function handleSignup(event) {
     name: name,
     email: email,
     password: pass,
-    role: users.length === 0 ? "admin" : "user"
+    role: "user"
   };
 
   // 4. Array mein push karo aur save karo
