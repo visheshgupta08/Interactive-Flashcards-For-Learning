@@ -1,115 +1,151 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Study Session - FlashLearn</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
-  <link rel="stylesheet" href="CSS/style.css">
-  <link rel="stylesheet" href="CSS/flashcard.css">
-  <link rel="stylesheet" href="CSS/responsive.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Study Session - FlashLearn</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>"
+    />
+    <link rel="stylesheet" href="CSS/style.css" />
+    <link rel="stylesheet" href="CSS/flashcard.css" />
+    <link rel="stylesheet" href="CSS/responsive.css" />
+  </head>
+  <body>
+    <!-- Navigation Bar -->
+    <header>
+      <nav class="navbar">
+        <div class="logo">⚡ FlashLearn</div>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="dashboard.html">Dashboard</a></li>
+          <li><a href="study.html" class="active">Study</a></li>
+          <li><a href="auth.html" id="navAuthLink">Login</a></li>
+        </ul>
+      </nav>
+    </header>
 
-  <!-- Navigation Bar -->
-  <header>
-    <nav class="navbar">
-      <div class="logo">⚡ FlashLearn</div>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="dashboard.html">Dashboard</a></li>
-        <li><a href="study.html" class="active">Study</a></li>
-        <li><a href="auth.html" id="navAuthLink">Login</a></li>
-      </ul>
-    </nav>
-  </header>
+    <main class="study-container">
+      <h2
+        id="currentDeckHeading"
+        style="font-size: 1.3rem; margin-bottom: 1.5rem; color: #1e293b"
+      >
+        Studying
+      </h2>
+      <!-- Top Action Bar -->
+      <div class="study-header">
+        <div class="progress-box">
+          <span id="cardIndicator">Card 1 of --</span>
+          <div class="progress-bar-bg">
+            <div id="progressBarFill" class="progress-bar-fill"></div>
+          </div>
+        </div>
+        <button class="btn btn-secondary" onclick="openAddCardModal()">
+          + Add Card
+        </button>
+      </div>
 
-  <main class="study-container">
-    <h2 id="currentDeckHeading" style="font-size: 1.3rem; margin-bottom: 1.5rem; color: #1e293b;">Studying</h2>
-    <!-- Top Action Bar -->
-    <div class="study-header">
-      <div class="progress-box">
-        <span id="cardIndicator">Card 1 of --</span>
-        <div class="progress-bar-bg">
-          <div id="progressBarFill" class="progress-bar-fill"></div>
+      <!-- 3D Flashcard Scene -->
+      <div class="flashcard-scene" onclick="flipCard()">
+        <div id="flashcardElement" class="flashcard">
+          <!-- Card Front -->
+          <div class="card-face card-front">
+            <span class="card-badge">Question</span>
+            <p id="cardQuestion" class="card-text">Loading question...</p>
+            <span class="flip-hint">Click card to reveal answer</span>
+          </div>
+
+          <!-- Card Back -->
+          <div class="card-face card-back">
+            <span class="card-badge">Answer</span>
+            <p id="cardAnswer" class="card-text">Loading answer...</p>
+            <span class="flip-hint">Click card to flip back</span>
+          </div>
         </div>
       </div>
-      <button class="btn btn-secondary" onclick="openAddCardModal()">+ Add Card</button>
-    </div>
 
-    <!-- 3D Flashcard Scene -->
-    <div class="flashcard-scene" onclick="flipCard()">
-      <div id="flashcardElement" class="flashcard">
-        
-        <!-- Card Front -->
-        <div class="card-face card-front">
-          <span class="card-badge">Question</span>
-          <p id="cardQuestion" class="card-text">Loading question...</p>
-          <span class="flip-hint">Click card to reveal answer</span>
+      <!-- Navigation Controls -->
+      <div class="nav-controls">
+        <button id="prevBtn" class="btn btn-secondary" onclick="prevCard()">
+          Previous
+        </button>
+        <button id="nextBtn" class="btn btn-primary" onclick="nextCard()">
+          Next
+        </button>
+      </div>
+
+      <!-- Difficulty Feedback -->
+      <div class="difficulty-controls">
+        <button class="btn diff-btn hard" onclick="recordRecall('hard')">
+          Needs Practice
+        </button>
+        <button class="btn diff-btn easy" onclick="recordRecall('easy')">
+          Mastered
+        </button>
+      </div>
+
+      <!-- Completion Summary Modal -->
+      <div id="summaryModal" class="summary-card hidden">
+        <h2>🎉 Deck Completed!</h2>
+        <p id="summaryScore">You completed all cards!</p>
+        <div class="summary-actions">
+          <button class="btn btn-primary" onclick="restartSession()">
+            Restart Deck
+          </button>
+          <a href="dashboard.html" class="btn btn-secondary"
+            >Back to Dashboard</a
+          >
         </div>
+      </div>
+    </main>
 
-        <!-- Card Back -->
-        <div class="card-face card-back">
-          <span class="card-badge">Answer</span>
-          <p id="cardAnswer" class="card-text">Loading answer...</p>
-          <span class="flip-hint">Click card to flip back</span>
+    <!-- Add Card Modal Popup -->
+    <div id="addCardModal" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>Add New Flashcard</h3>
+          <button class="close-btn" onclick="closeAddCardModal()">
+            &times;
+          </button>
         </div>
-
+        <form onsubmit="handleAddNewCard(event)">
+          <div class="form-group">
+            <label for="newQuestion">Question</label>
+            <input
+              type="text"
+              id="newQuestion"
+              placeholder="Enter question..."
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="newAnswer">Answer</label>
+            <input
+              type="text"
+              id="newAnswer"
+              placeholder="Enter answer..."
+              required
+            />
+          </div>
+          <div class="modal-actions">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="closeAddCardModal()"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary">Save Card</button>
+          </div>
+        </form>
       </div>
     </div>
+    <div id="toast" class="toast hidden">Card added!</div>
+    <footer>
+      <p>Developed by Team <strong>WebNova</strong> | CSE326 CA1 Project</p>
+    </footer>
 
-    <!-- Navigation Controls -->
-    <div class="nav-controls">
-      <button id="prevBtn" class="btn btn-secondary" onclick="prevCard()">Previous</button>
-      <button id="nextBtn" class="btn btn-primary" onclick="nextCard()">Next</button>
-    </div>
-
-    <!-- Difficulty Feedback -->
-    <div class="difficulty-controls">
-      <button class="btn diff-btn hard" onclick="recordRecall('hard')">Needs Practice</button>
-      <button class="btn diff-btn easy" onclick="recordRecall('easy')">Mastered</button>
-    </div>
-
-    <!-- Completion Summary Modal -->
-    <div id="summaryModal" class="summary-card hidden">
-      <h2>🎉 Deck Completed!</h2>
-      <p id="summaryScore">You completed all cards!</p>
-      <div class="summary-actions">
-        <button class="btn btn-primary" onclick="restartSession()">Restart Deck</button>
-        <a href="dashboard.html" class="btn btn-secondary">Back to Dashboard</a>
-      </div>
-    </div>
-
-  </main>
-
-  <!-- Add Card Modal Popup -->
-  <div id="addCardModal" class="modal-overlay hidden">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3>Add New Flashcard</h3>
-        <button class="close-btn" onclick="closeAddCardModal()">&times;</button>
-      </div>
-      <form onsubmit="handleAddNewCard(event)">
-        <div class="form-group">
-          <label for="newQuestion">Question</label>
-          <input type="text" id="newQuestion" placeholder="Enter question..." required>
-        </div>
-        <div class="form-group">
-          <label for="newAnswer">Answer</label>
-          <input type="text" id="newAnswer" placeholder="Enter answer..." required>
-        </div>
-        <div class="modal-actions">
-          <button type="button" class="btn btn-secondary" onclick="closeAddCardModal()">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save Card</button>
-        </div>
-      </form>
-    </div>
-  </div>
-<div id="toast" class="toast hidden">Card added!</div>
-  <footer>
-    <p>Developed by Team <strong>WebNova</strong> | CSE326 CA1 Project</p>
-  </footer>
-
-  <script src="JS/study.js"></script>
-</body>
+    <script src="JS/study.js"></script>
+  </body>
 </html>

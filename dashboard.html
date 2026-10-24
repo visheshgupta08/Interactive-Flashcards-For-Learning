@@ -1,74 +1,83 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - FlashLearn</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
-  <link rel="stylesheet" href="CSS/style.css">
-  <link rel="stylesheet" href="CSS/responsive.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - FlashLearn</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>"
+    />
+    <link rel="stylesheet" href="CSS/style.css" />
+    <link rel="stylesheet" href="CSS/responsive.css" />
+  </head>
+  <body>
+    <!-- Navigation Bar -->
+    <header>
+      <nav class="navbar">
+        <div class="logo">⚡ FlashLearn</div>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="dashboard.html" class="active">Dashboard</a></li>
+          <li><a href="study.html">Study</a></li>
+          <li>
+            <button onclick="handleLogout()" class="btn btn-secondary">
+              Logout
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </header>
 
-  <!-- Navigation Bar -->
-  <header>
-    <nav class="navbar">
-      <div class="logo">⚡ FlashLearn</div>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="dashboard.html" class="active">Dashboard</a></li>
-        <li><a href="study.html">Study</a></li>
-        <li><button onclick="handleLogout()" class="btn btn-secondary">Logout</button></li>
-      </ul>
-    </nav>
-  </header>
-
-  <main class="dashboard-container">
-    
-    <!-- User Stats Section -->
-    <section class="user-banner">
-      <div>
-        <h2 id="userGreeting">Welcome back, Student!</h2>
-        <p>Ready to practice your flashcards today?</p>
-      <div class="stats-row">
-        <div class="stat-badge">
-          <span class="stat-num" id="totalDecksStat">6</span>
-          <span class="stat-label">Decks</span>
+    <main class="dashboard-container">
+      <!-- User Stats Section -->
+      <section class="user-banner">
+        <div>
+          <h2 id="userGreeting">Welcome back, Student!</h2>
+          <p>Ready to practice your flashcards today?</p>
         </div>
-        <div class="stat-badge">
-          <span class="stat-num" id="totalReviewedStat">0</span>
-          <span class="stat-label">Reviewed</span>
+        <div class="stats-row">
+          <div class="stat-badge">
+            <span class="stat-num" id="totalDecksStat">6</span>
+            <span class="stat-label">Decks</span>
+          </div>
+          <div class="stat-badge">
+            <span class="stat-num" id="totalReviewedStat">0</span>
+            <span class="stat-label">Reviewed</span>
+          </div>
+          <div class="stat-badge">
+            <span class="stat-num" id="studyStreakStat">0 Days</span>
+            <span class="stat-label">Streak</span>
+          </div>
         </div>
-        <div class="stat-badge">
-          <span class="stat-num" id="studyStreakStat">0 Days</span>
-          <span class="stat-label">Streak</span>
-        </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- Search & Filter Controls -->
-    <section class="controls-bar">
-      <input type="text" id="searchInput" placeholder="Search decks by title...">
-      
-      <select id="categoryFilter">
-        <option value="All">All Categories</option>
-        <option value="Web Development">Web Development</option>
-        <option value="Programming">Programming</option>
-        <option value="Core CS">Core CS</option>
-      </select>
-    </section>
+      <!-- Search & Filter Controls -->
+      <section class="controls-bar">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search decks by title..."
+        />
 
-    <!-- Decks Grid -->
-    <section class="decks-grid" id="decksContainer">
-      <!-- Cards dynamically injected by dashboard.js -->
-    </section>
+        <select id="categoryFilter">
+          <option value="All">All Categories</option>
+          <option value="Web Development">Web Development</option>
+          <option value="Programming">Programming</option>
+          <option value="Core CS">Core CS</option>
+        </select>
+      </section>
 
-  </main>
+      <!-- Decks Grid -->
+      <section class="decks-grid" id="decksContainer">
+        <!-- Cards dynamically injected by dashboard.js -->
+      </section>
+    </main>
 
-  <footer>
-    <p>Developed by Team <strong>WebNova</strong> | CSE326 CA1 Project</p>
-  </footer>
+    <footer>
+      <p>Developed by Team <strong>WebNova</strong> | CSE326 CA1 Project</p>
+    </footer>
 
-  <script src="JS/dashboard.js"></script>
-</body>
+    <script src="JS/dashboard.js"></script>
+  </body>
 </html>

@@ -3,22 +3,38 @@ if (localStorage.getItem("isLoggedIn") !== "true") {
   window.location.href = "auth.html";
 }
 
-// Analytics Tracker: Review counts aur daily streak localStorage mein update karna
-function trackCardReview() {
-  // 1. Cards Reviewed count increment
-  var count = parseInt(localStorage.getItem("cardsReviewed") || "0", 10);
-  localStorage.setItem("cardsReviewed", (count + 1).toString());
+// Session mein kaunse cards padhe ja chuke hain unko track karne ke liye
+var reviewedCardIndices = [];
 
-  // 2. Study Streak update (Date-based tracking)
+// Analytics Tracker: User-specific review counts aur streak localStorage mein update karna
+function trackCardReview() {
+  // 1. Check karo ki yeh card is session mein pehle review hua ya nahi
+  if (reviewedCardIndices.indexOf(currentIndex) !== -1) {
+    return; // Already counted, dobara count mat badhao
+  }
+  reviewedCardIndices.push(currentIndex);
+
+  // 2. Active logged-in user nikalo
+  var activeUser = JSON.parse(localStorage.getItem("userAccount") || "{}");
+  var userKey = activeUser.email ? "_" + activeUser.email : "";
+
+  // 3. User-specific cards reviewed count update
+  var countKey = "cardsReviewed" + userKey;
+  var count = parseInt(localStorage.getItem(countKey) || "0", 10);
+  localStorage.setItem(countKey, (count + 1).toString());
+
+  // 4. User-specific daily streak update (Date-based tracking)
   var today = new Date().toISOString().split("T")[0];
-  var lastDate = localStorage.getItem("lastStudyDate");
+  var lastDateKey = "lastStudyDate" + userKey;
+  var streakKey = "studyStreak" + userKey;
+  var lastDate = localStorage.getItem(lastDateKey);
 
   if (lastDate !== today) {
     var yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     var yesterdayStr = yesterday.toISOString().split("T")[0];
 
-    var currentStreak = parseInt(localStorage.getItem("studyStreak") || "0", 10);
+    var currentStreak = parseInt(localStorage.getItem(streakKey) || "0", 10);
 
     if (lastDate === yesterdayStr) {
       currentStreak += 1;
@@ -26,8 +42,8 @@ function trackCardReview() {
       currentStreak = 1; // Streak fresh start
     }
 
-    localStorage.setItem("studyStreak", currentStreak.toString());
-    localStorage.setItem("lastStudyDate", today);
+    localStorage.setItem(streakKey, currentStreak.toString());
+    localStorage.setItem(lastDateKey, today);
   }
 }
 
@@ -81,6 +97,7 @@ var masteredCount = 0;
 window.onload = function() {
   loadActiveDeck();
   setupKeyboardNavigation(); // Keyboard controls ON
+
   // Navbar Login/Logout toggle logic
   var navAuth = document.getElementById("navAuthLink");
   if (navAuth && localStorage.getItem("isLoggedIn") === "true") {
@@ -101,7 +118,7 @@ function loadActiveDeck() {
     currentDeckId = savedDeckId;
   }
 
-  // 2. Study page par Deck ka Title dikhana
+  // Study page par Deck ka Title dikhana
   var savedTitle = localStorage.getItem("activeDeckTitle") || "Flashcard Session";
   var headingElement = document.getElementById("currentDeckHeading");
   if (headingElement) {
@@ -121,6 +138,7 @@ function loadActiveDeck() {
   currentDeckCards = allDecks[currentDeckId] || defaultCards[1];
   currentIndex = 0;
   masteredCount = 0;
+  reviewedCardIndices = []; // Naye deck ya session ke liye reset
   loadCard(currentIndex);
 }
 
@@ -157,7 +175,7 @@ function flipCard() {
   cardElement.classList.toggle("is-flipped");
   isFlipped = !isFlipped;
 
-  // Har baar jab card reveal hota hai tab review track karo
+  // Jab card reveal hota hai tab uniquely review track karo
   if (isFlipped) {
     trackCardReview();
   }
@@ -203,7 +221,7 @@ function prevCard() {
   }
 }
 
-// Har card ka recall status track krna
+// Har card ka recall status track karna
 var cardProgress = {};
 
 function recordRecall(level) {
@@ -218,14 +236,12 @@ function recordRecall(level) {
   }
 
   // Answer submit hone par bhi count track karo agar flip nahi kiya ho
-  if (!isFlipped) {
-    trackCardReview();
-  }
+  trackCardReview();
 
   nextCard();
 }
 
-// 3. Keyboard Shortcuts (Spacebar se flip, Arrow keys se Next/Prev)
+// Keyboard Shortcuts (Spacebar se flip, Arrow keys se Next/Prev)
 function setupKeyboardNavigation() {
   document.addEventListener("keydown", function(e) {
     var modal = document.getElementById("addCardModal");
@@ -259,7 +275,8 @@ function showSummary() {
 function restartSession() {
   currentIndex = 0;
   masteredCount = 0;
-  cardProgress = {}; // Reset Tracking
+  cardProgress = {}; // Reset tracking
+  reviewedCardIndices = []; // Reset reviewed cards tracking
   document.querySelector(".flashcard-scene").classList.remove("hidden");
   document.querySelector(".difficulty-controls").classList.remove("hidden");
   document.querySelector(".nav-controls").classList.remove("hidden");
@@ -279,7 +296,7 @@ function closeAddCardModal() {
   document.getElementById("newAnswer").value = "";
 }
 
-// 4. Toast Notification popup
+// Toast Notification popup
 function showToast(message) {
   var toast = document.getElementById("toast");
   if (!toast) return;
@@ -316,6 +333,5 @@ function handleAddNewCard(event) {
   loadCard(currentDeckCards.length - 1);
   currentIndex = currentDeckCards.length - 1;
 
-  // 5. Success Popup message trigger
   showToast("Flashcard added successfully!");
 }

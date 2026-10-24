@@ -1,62 +1,79 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FlashLearn - Interactive Flashcards</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
-  <link rel="stylesheet" href="CSS/style.css">
-  <link rel="stylesheet" href="CSS/responsive.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FlashLearn - Interactive Flashcards</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>"
+    />
+    <link rel="stylesheet" href="CSS/style.css" />
+    <link rel="stylesheet" href="CSS/responsive.css" />
+  </head>
+  <body>
+    <!-- Navigation Bar -->
+    <header>
+      <nav class="navbar">
+        <div class="logo">⚡ FlashLearn</div>
+        <ul class="nav-links">
+          <li><a href="index.html" class="active">Home</a></li>
+          <li><a href="dashboard.html">Dashboard</a></li>
+          <li><a href="study.html">Study</a></li>
+          <li>
+            <a href="auth.html" class="btn btn-primary" id="navAuthLink"
+              >Login / Sign Up</a
+            >
+          </li>
+        </ul>
+      </nav>
+    </header>
 
-  <!-- Navigation Bar -->
-  <header>
-    <nav class="navbar">
-      <div class="logo">⚡ FlashLearn</div>
-      <ul class="nav-links">
-        <li><a href="index.html" class="active">Home</a></li>
-        <li><a href="dashboard.html">Dashboard</a></li>
-        <li><a href="study.html">Study</a></li>
-        <li><a href="auth.html" class="btn btn-primary" id="navAuthLink">Login / Sign Up</a></li>
-      </ul>
-    </nav>
-  </header>
-
-  <!-- Hero Section -->
-  <main>
-    <section class="hero">
-      <div class="hero-content">
-        <h1>Master Any Subject with Smart Flashcards</h1>
-        <p>Interactive active recall flashcards built for college subjects, exams, and daily revision.</p>
-        <div class="hero-buttons">
-          <a href="study.html" class="btn btn-primary">Start Practicing</a>
-          <a href="dashboard.html" class="btn btn-secondary">Explore Decks</a>
+    <!-- Hero Section -->
+    <main>
+      <section class="hero">
+        <div class="hero-content">
+          <h1>Master Any Subject with Smart Flashcards</h1>
+          <p>
+            Interactive active recall flashcards built for college subjects,
+            exams, and daily revision.
+          </p>
+          <div class="hero-buttons">
+            <a href="study.html" class="btn btn-primary">Start Practicing</a>
+            <a href="dashboard.html" class="btn btn-secondary">Explore Decks</a>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- Features Overview -->
-    <section class="features">
-      <div class="feature-card">
-        <h3>Interactive 3D Flip</h3>
-        <p>Smooth flip animations with keyboard support to test recall instantly.</p>
-      </div>
-      <div class="feature-card">
-        <h3>Self-Evaluation</h3>
-        <p>Rate card difficulty and view your completed mastery summary per session. </p>
-      </div>
-      <div class="feature-card">
-        <h3>Custom Flashcards</h3>
-        <p>Easily create and add your own cards across web and core CS decks.</p>
-      </div>
-    </section>
-  </main>
+      <!-- Features Overview -->
+      <section class="features">
+        <div class="feature-card">
+          <h3>Interactive 3D Flip</h3>
+          <p>
+            Smooth flip animations with keyboard support to test recall
+            instantly.
+          </p>
+        </div>
+        <div class="feature-card">
+          <h3>Self-Evaluation</h3>
+          <p>
+            Rate card difficulty and view your completed mastery summary per
+            session.
+          </p>
+        </div>
+        <div class="feature-card">
+          <h3>Custom Flashcards</h3>
+          <p>
+            Easily create and add your own cards across web and core CS decks.
+          </p>
+        </div>
+      </section>
+    </main>
 
-  <footer>
-    <p>Developed by Team <strong>WebNova</strong> | CSE326 CA1 Project</p>
-  </footer>
+    <footer>
+      <p>Developed by Team <strong>WebNova</strong> | CSE326 CA1 Project</p>
+    </footer>
 
-  <script src="JS/app.js"></script>
-</body>
+    <script src="JS/app.js"></script>
+  </body>
 </html>

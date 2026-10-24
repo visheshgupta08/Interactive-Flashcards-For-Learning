@@ -52,7 +52,7 @@ var availableDecks = [
 window.onload = function() {
   loadUserProfile();
   syncCustomDeckCounts(); // Custom cards add hone par count update karega
-  updateDashboardStats(); // Real analytics render karega
+  updateDashboardStats(); // User-specific dynamic stats calculate aur render karega
   renderDecks(availableDecks);
   setupFilterEvents();
 };
@@ -86,26 +86,33 @@ function syncCustomDeckCounts() {
   }
 }
 
-// 2. Dynamic Real Stats Handler (Total Decks, Reviewed, Streak)
+// 2. User-specific Dynamic Stats Handler (Total Decks, Reviewed, Streak)
 function updateDashboardStats() {
+  // Current logged-in user nikalo taaki har user ka apna alag data load ho
+  var activeUser = JSON.parse(localStorage.getItem("userAccount") || "{}");
+  var userKey = activeUser.email ? "_" + activeUser.email : "";
+
   // A. Total Decks count
   var totalDecksEl = document.getElementById("totalDecksStat");
   if (totalDecksEl) {
     totalDecksEl.innerText = availableDecks.length;
   }
 
-  // B. Cards Reviewed count (study.js se track hota hai)
+  // B. User-specific Cards Reviewed count
   var reviewedEl = document.getElementById("totalReviewedStat");
-  var reviewedCount = localStorage.getItem("cardsReviewed") || "0";
+  var reviewedCount = localStorage.getItem("cardsReviewed" + userKey) || "0";
   if (reviewedEl) {
     reviewedEl.innerText = reviewedCount;
   }
 
-  // C. Daily Study Streak (Date-based dynamic tracking)
+  // C. User-specific Daily Study Streak (Date-based dynamic tracking)
   var streakEl = document.getElementById("studyStreakStat");
   if (streakEl) {
-    var lastStudyDate = localStorage.getItem("lastStudyDate");
-    var currentStreak = parseInt(localStorage.getItem("studyStreak") || "0", 10);
+    var lastDateKey = "lastStudyDate" + userKey;
+    var streakKey = "studyStreak" + userKey;
+
+    var lastStudyDate = localStorage.getItem(lastDateKey);
+    var currentStreak = parseInt(localStorage.getItem(streakKey) || "0", 10);
     var today = new Date().toISOString().split("T")[0];
 
     if (lastStudyDate) {
@@ -113,10 +120,10 @@ function updateDashboardStats() {
       yesterday.setDate(yesterday.getDate() - 1);
       var yesterdayStr = yesterday.toISOString().split("T")[0];
 
-      // Agar streak break ho gayi hai (aaj ya kal padhai nahi hui)
+      // Agar streak break ho gayi hai
       if (lastStudyDate !== today && lastStudyDate !== yesterdayStr) {
         currentStreak = 0;
-        localStorage.setItem("studyStreak", "0");
+        localStorage.setItem(streakKey, "0");
       }
     } else {
       currentStreak = 0;

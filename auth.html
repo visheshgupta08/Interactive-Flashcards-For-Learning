@@ -1,93 +1,136 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login & Signup - FlashLearn</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
-  <link rel="stylesheet" href="CSS/style.css">
-  <link rel="stylesheet" href="CSS/responsive.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login & Signup - FlashLearn</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>"
+    />
+    <link rel="stylesheet" href="CSS/style.css" />
+    <link rel="stylesheet" href="CSS/responsive.css" />
+  </head>
+  <body>
+    <!-- Navigation Bar -->
+    <header>
+      <nav class="navbar">
+        <div class="logo">⚡ FlashLearn</div>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="dashboard.html">Dashboard</a></li>
+          <li><a href="study.html">Study</a></li>
+          <li><a href="auth.html" class="active">Login</a></li>
+        </ul>
+      </nav>
+    </header>
 
-  <!-- Navigation Bar -->
-  <header>
-    <nav class="navbar">
-      <div class="logo">⚡ FlashLearn</div>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="dashboard.html">Dashboard</a></li>
-        <li><a href="study.html">Study</a></li>
-        <li><a href="auth.html" class="active">Login</a></li>
-      </ul>
-    </nav>
-  </header>
+    <!-- Auth Card Wrapper -->
+    <main class="auth-wrapper">
+      <div class="auth-card">
+        <!-- Tab Switcher -->
+        <div class="auth-tabs">
+          <button
+            id="loginTabBtn"
+            class="tab-btn active"
+            onclick="showLogin()"
+            type="button"
+          >
+            Login
+          </button>
+          <button
+            id="signupTabBtn"
+            class="tab-btn"
+            onclick="showSignup()"
+            type="button"
+          >
+            Sign Up
+          </button>
+        </div>
 
-  <!-- Auth Card Wrapper -->
-  <main class="auth-wrapper">
-    <div class="auth-card">
-      
-      <!-- Tab Switcher -->
-      <div class="auth-tabs">
-        <button id="loginTabBtn" class="tab-btn active" onclick="showLogin()" type="button">Login</button>
-        <button id="signupTabBtn" class="tab-btn" onclick="showSignup()" type="button">Sign Up</button>
+        <!-- Alert Message Box -->
+        <div id="authMessage" class="auth-msg"></div>
+
+        <!-- Login Form Container -->
+        <div id="loginForm" class="form-container">
+          <h2>Welcome Back</h2>
+          <p class="auth-subtitle">Log in to track your learning progress</p>
+
+          <form onsubmit="handleLogin(event)">
+            <div class="form-group">
+              <label for="loginEmail">Email Address</label>
+              <input
+                type="email"
+                id="loginEmail"
+                placeholder="student@example.com"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="loginPass">Password</label>
+              <input
+                type="password"
+                id="loginPass"
+                placeholder="Enter password"
+                required
+              />
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">
+              Login
+            </button>
+          </form>
+        </div>
+
+        <!-- Sign Up Form Container (Default Hidden) -->
+        <div id="signupForm" class="form-container hidden">
+          <h2>Create Account</h2>
+          <p class="auth-subtitle">Join FlashLearn to master your subjects</p>
+
+          <form onsubmit="handleSignup(event)">
+            <div class="form-group">
+              <label for="signupName">Full Name</label>
+              <input
+                type="text"
+                id="signupName"
+                placeholder="Your Name"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="signupEmail">Email Address</label>
+              <input
+                type="email"
+                id="signupEmail"
+                placeholder="student@example.com"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="signupPass">Password</label>
+              <input
+                type="password"
+                id="signupPass"
+                placeholder="At least 6 characters"
+                required
+              />
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">
+              Create Account
+            </button>
+          </form>
+        </div>
       </div>
+    </main>
 
-      <!-- Alert Message Box -->
-      <div id="authMessage" class="auth-msg"></div>
+    <footer>
+      <p>Developed by Team <strong>WebNova</strong> | CSE326 CA1 Project</p>
+    </footer>
 
-      <!-- Login Form Container -->
-      <div id="loginForm" class="form-container">
-        <h2>Welcome Back</h2>
-        <p class="auth-subtitle">Log in to track your learning progress</p>
-
-        <form onsubmit="handleLogin(event)">
-          <div class="form-group">
-            <label for="loginEmail">Email Address</label>
-            <input type="email" id="loginEmail" placeholder="student@example.com" required>
-          </div>
-
-          <div class="form-group">
-            <label for="loginPass">Password</label>
-            <input type="password" id="loginPass" placeholder="Enter password" required>
-          </div>
-
-          <button type="submit" class="btn btn-primary btn-block">Login</button>
-        </form>
-      </div>
-
-      <!-- Sign Up Form Container (Default Hidden) -->
-      <div id="signupForm" class="form-container hidden">
-        <h2>Create Account</h2>
-        <p class="auth-subtitle">Join FlashLearn to master your subjects</p>
-
-        <form onsubmit="handleSignup(event)">
-          <div class="form-group">
-            <label for="signupName">Full Name</label>
-            <input type="text" id="signupName" placeholder="Your Name" required>
-          </div>
-
-          <div class="form-group">
-            <label for="signupEmail">Email Address</label>
-            <input type="email" id="signupEmail" placeholder="student@example.com" required>
-          </div>
-
-          <div class="form-group">
-            <label for="signupPass">Password</label>
-            <input type="password" id="signupPass" placeholder="At least 6 characters" required>
-          </div>
-
-          <button type="submit" class="btn btn-primary btn-block">Create Account</button>
-        </form>
-      </div>
-
-    </div>
-  </main>
-
-  <footer>
-    <p>Developed by Team <strong>WebNova</strong> | CSE326 CA1 Project</p>
-  </footer>
-
-  <script src="JS/auth.js"></script>
-</body>
+    <script src="JS/auth.js"></script>
+  </body>
 </html>

@@ -60,6 +60,7 @@ Interactive-Flashcards/
 │   └── responsive.css    # Media queries for mobile & tablet screens
 │
 ├── JS/                   # Client-side scripts
+│   ├── app.js           # Landing page navigation and global auth status toggle
 │   ├── auth.js           # Registration & session validation
 │   ├── dashboard.js      # Deck filters and user greeting
 │   └── study.js          # Flashcard engine, keyboard logic & modal handlers
