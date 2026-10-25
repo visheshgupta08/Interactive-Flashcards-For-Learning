@@ -33,7 +33,7 @@ function trackCardReview() {
   localStorage.setItem(countKey, (count + 1).toString());
 
   // 4. User-specific daily streak update (Date-based tracking)
-  var today = new Date().toISOString().split("T")[0];
+  var today = getLocalDateString();
   var lastDateKey = "lastStudyDate" + userKey;
   var streakKey = "studyStreak" + userKey;
   var lastDate = localStorage.getItem(lastDateKey);
@@ -41,7 +41,7 @@ function trackCardReview() {
   if (lastDate !== today) {
     var yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
-    var yesterdayStr = yesterday.toISOString().split("T")[0];
+    var yesterdayStr = getLocalDateString(yesterday);
 
     var currentStreak = parseInt(localStorage.getItem(streakKey) || "0", 10);
 

@@ -122,12 +122,12 @@ function updateDashboardStats() {
 
     var lastStudyDate = localStorage.getItem(lastDateKey);
     var currentStreak = parseInt(localStorage.getItem(streakKey) || "0", 10);
-    var today = new Date().toISOString().split("T")[0];
+    var today = getLocalDateString();
 
     if (lastStudyDate) {
       var yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
-      var yesterdayStr = yesterday.toISOString().split("T")[0];
+      var yesterdayStr = getLocalDateString(yesterday);
 
       // Agar streak break ho gayi hai
       if (lastStudyDate !== today && lastStudyDate !== yesterdayStr) {
