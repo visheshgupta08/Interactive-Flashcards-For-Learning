@@ -32,6 +32,12 @@ function trackCardReview() {
   var count = parseInt(localStorage.getItem(countKey) || "0", 10);
   localStorage.setItem(countKey, (count + 1).toString());
 
+  // Deck progress update (In Progress)
+  var progressKey = "progress_" + currentDeckId + userKey;
+  if (localStorage.getItem(progressKey) !== "Completed") {
+    localStorage.setItem(progressKey, "In Progress");
+  }
+
   // 4. User-specific daily streak update (Date-based tracking)
   var today = getLocalDateString();
   var lastDateKey = "lastStudyDate" + userKey;
@@ -278,6 +284,10 @@ function showSummary() {
 
   document.getElementById("summaryScore").innerText = 
     "You completed all " + currentDeckCards.length + " cards! Mastered: " + masteredCount;
+
+  var activeUser = JSON.parse(localStorage.getItem("userAccount") || "{}");
+  var userKey = activeUser.email ? "_" + activeUser.email : "";
+  localStorage.setItem("progress_" + currentDeckId + userKey, "Completed");
 }
 
 // Restart Session

@@ -1,9 +1,8 @@
-// Auth Guard: Agar user login nahi hai toh login page bhej do
+// Auth Guard
 if (localStorage.getItem("isLoggedIn") !== "true") {
   window.location.href = "auth.html";
 }
 
-// Helper function: Local Timezone date
 function getLocalDateString(d) {
   var date = d || new Date();
   var year = date.getFullYear();
@@ -12,61 +11,25 @@ function getLocalDateString(d) {
   return year + "-" + month + "-" + day;
 }
 
-// 6 Decks ka data array (Dynamically inject karne ke liye)
-var availableDecks = [
-  {
-    id: "1",
-    title: "HTML Fundamentals",
-    category: "Web Development",
-    desc: "Tags, semantic structure, links, forms, and attributes.",
-    cardCount: 5
-  },
-  {
-    id: "2",
-    title: "CSS Box Model & Flexbox",
-    category: "Web Development",
-    desc: "Margin, padding, flex container, alignment, and grid.",
-    cardCount: 4
-  },
-  {
-    id: "3",
-    title: "JavaScript Core Concepts",
-    category: "Programming",
-    desc: "Variables, data types, loops, functions, and events.",
-    cardCount: 4
-  },
-  {
-    id: "4",
-    title: "Computer Networking Basics",
-    category: "Core CS",
-    desc: "Protocols, IP addressing, HTTP/HTTPS, and ports.",
-    cardCount: 4
-  },
-  {
-    id: "5",
-    title: "Data Structures Basics",
-    category: "Programming",
-    desc: "Arrays, linked lists, stacks, queues, and time complexity.",
-    cardCount: 4
-  },
-  {
-    id: "6",
-    title: "SQL & Database Essentials",
-    category: "Core CS",
-    desc: "RDBMS, primary keys, SQL queries, and normalization.",
-    cardCount: 4
-  }
+// Default system decks
+var defaultDecks = [
+  { id: "1", title: "HTML Fundamentals", category: "Web Development", desc: "Tags, semantic structure, links, forms, and attributes.", cardCount: 5, isCustom: false },
+  { id: "2", title: "CSS Box Model & Flexbox", category: "Web Development", desc: "Margin, padding, flex container, alignment, and grid.", cardCount: 4, isCustom: false },
+  { id: "3", title: "JavaScript Core Concepts", category: "Programming", desc: "Variables, data types, loops, functions, and events.", cardCount: 4, isCustom: false },
+  { id: "4", title: "Computer Networking Basics", category: "Core CS", desc: "Protocols, IP addressing, HTTP/HTTPS, and ports.", cardCount: 4, isCustom: false },
+  { id: "5", title: "Data Structures Basics", category: "Programming", desc: "Arrays, linked lists, stacks, queues, and time complexity.", cardCount: 4, isCustom: false },
+  { id: "6", title: "SQL & Database Essentials", category: "Core CS", desc: "RDBMS, primary keys, SQL queries, and normalization.", cardCount: 4, isCustom: false }
 ];
+
+var allDecksList = [];
 
 window.onload = function() {
   loadUserProfile();
-  syncCustomDeckCounts(); // Custom cards add hone par count update karega
-  updateDashboardStats(); // User-specific dynamic stats calculate aur render karega
-  renderDecks(availableDecks);
+  initDeckData();
+  updateDashboardStats();
   setupFilterEvents();
 };
 
-// 1. Dynamic Greeting
 function loadUserProfile() {
   var savedUser = localStorage.getItem("userAccount");
   var greetingElement = document.getElementById("userGreeting");
@@ -78,43 +41,44 @@ function loadUserProfile() {
   }
 }
 
-// Custom added cards check karke real cardCount update karna
-function syncCustomDeckCounts() {
-  var storedCustomDecks = localStorage.getItem("customFlashcards");
-  if (storedCustomDecks) {
+// System + Custom Decks Sync
+function initDeckData() {
+  var storedUserDecks = JSON.parse(localStorage.getItem("userDecksList") || "[]");
+  allDecksList = defaultDecks.concat(storedUserDecks);
+
+  // Sync card counts from customFlashcards
+  var storedCustomCards = localStorage.getItem("customFlashcards");
+  if (storedCustomCards) {
     try {
-      var parsedDecks = JSON.parse(storedCustomDecks);
-      availableDecks.forEach(function(deck) {
-        if (parsedDecks[deck.id] && Array.isArray(parsedDecks[deck.id])) {
-          deck.cardCount = parsedDecks[deck.id].length;
+      var parsedCards = JSON.parse(storedCustomCards);
+      allDecksList.forEach(function(deck) {
+        if (parsedCards[deck.id] && Array.isArray(parsedCards[deck.id])) {
+          deck.cardCount = parsedCards[deck.id].length;
         }
       });
     } catch (e) {
-      console.error("Could not sync custom flashcards", e);
+      console.error("Card sync error:", e);
     }
   }
+
+  renderDecks(allDecksList);
 }
 
-// 2. User-specific Dynamic Stats Handler (Total Decks, Reviewed, Streak)
 function updateDashboardStats() {
-  // Current logged-in user nikalo taaki har user ka apna alag data load ho
   var activeUser = JSON.parse(localStorage.getItem("userAccount") || "{}");
   var userKey = activeUser.email ? "_" + activeUser.email : "";
 
-  // A. Total Decks count
   var totalDecksEl = document.getElementById("totalDecksStat");
   if (totalDecksEl) {
-    totalDecksEl.innerText = availableDecks.length;
+    totalDecksEl.innerText = allDecksList.length;
   }
 
-  // B. User-specific Cards Reviewed count
   var reviewedEl = document.getElementById("totalReviewedStat");
   var reviewedCount = localStorage.getItem("cardsReviewed" + userKey) || "0";
   if (reviewedEl) {
     reviewedEl.innerText = reviewedCount;
   }
 
-  // C. User-specific Daily Study Streak (Date-based dynamic tracking)
   var streakEl = document.getElementById("studyStreakStat");
   if (streakEl) {
     var lastDateKey = "lastStudyDate" + userKey;
@@ -129,7 +93,6 @@ function updateDashboardStats() {
       yesterday.setDate(yesterday.getDate() - 1);
       var yesterdayStr = getLocalDateString(yesterday);
 
-      // Agar streak break ho gayi hai
       if (lastStudyDate !== today && lastStudyDate !== yesterdayStr) {
         currentStreak = 0;
         localStorage.setItem(streakKey, "0");
@@ -142,7 +105,6 @@ function updateDashboardStats() {
   }
 }
 
-// 3. Dynamic Deck Renderer
 function renderDecks(decksToDisplay) {
   var container = document.getElementById("decksContainer");
   if (!container) return;
@@ -159,8 +121,31 @@ function renderDecks(decksToDisplay) {
     cardDiv.className = "deck-card";
     cardDiv.setAttribute("data-category", deck.category);
 
+    var activeUser = JSON.parse(localStorage.getItem("userAccount") || "{}");
+    var userKey = activeUser.email ? "_" + activeUser.email : "";
+    var deckStatus = localStorage.getItem("progress_" + deck.id + userKey) || "Not Started";
+
+    // Status ke hisaab se color
+    var badgeColor = "#64748b"; // gray for Not Started
+    var badgeBg = "#f1f5f9";
+    if (deckStatus === "In Progress") {
+      badgeColor = "#d97706"; // amber
+      badgeBg = "#fef3c7";
+    } else if (deckStatus === "Completed") {
+      badgeColor = "#16a34a"; // green
+      badgeBg = "#dcfce7";
+    }
+
+    var deleteBtnHtml = deck.isCustom 
+      ? `<button onclick="deleteDeck('${deck.id}')" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.85rem; margin-left: auto;">🗑 Delete</button>`
+      : "";
+
     cardDiv.innerHTML = `
-      <span class="deck-tag">${deck.category}</span>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+        <span class="deck-tag">${deck.category}</span>
+        <span style="font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.5rem; border-radius: 9999px; background: ${badgeBg}; color: ${badgeColor};">${deckStatus}</span>
+        ${deleteBtnHtml}
+      </div>
       <h3>${deck.title}</h3>
       <p>${deck.desc}</p>
       <div class="deck-footer">
@@ -173,7 +158,6 @@ function renderDecks(decksToDisplay) {
   });
 }
 
-// 4. Search & Category Filter Logic
 function setupFilterEvents() {
   var searchInput = document.getElementById("searchInput");
   var categoryFilter = document.getElementById("categoryFilter");
@@ -182,7 +166,7 @@ function setupFilterEvents() {
     var query = searchInput ? searchInput.value.toLowerCase().trim() : "";
     var selectedCategory = categoryFilter ? categoryFilter.value : "All";
 
-    var filtered = availableDecks.filter(function(deck) {
+    var filtered = allDecksList.filter(function(deck) {
       var matchesSearch = deck.title.toLowerCase().includes(query) || deck.desc.toLowerCase().includes(query);
       var matchesCategory = selectedCategory === "All" || deck.category === selectedCategory;
       return matchesSearch && matchesCategory;
@@ -199,14 +183,75 @@ function setupFilterEvents() {
   }
 }
 
-// 5. Study Page Redirect with Deck ID and Title
+// Modal Handlers
+function openCreateDeckModal() {
+  var modal = document.getElementById("createDeckModal");
+  if (modal) modal.classList.remove("hidden");
+}
+
+function closeCreateDeckModal() {
+  var modal = document.getElementById("createDeckModal");
+  if (modal) modal.classList.add("hidden");
+  document.getElementById("newDeckTitle").value = "";
+  document.getElementById("newDeckDesc").value = "";
+}
+
+function handleCreateDeck(event) {
+  event.preventDefault();
+
+  var title = document.getElementById("newDeckTitle").value.trim();
+  var category = document.getElementById("newDeckCategory").value;
+  var desc = document.getElementById("newDeckDesc").value.trim();
+
+  if (!title || !desc) return;
+
+  var newDeck = {
+    id: "deck_" + Date.now(),
+    title: title,
+    category: category,
+    desc: desc,
+    cardCount: 0,
+    isCustom: true
+  };
+
+  var userDecks = JSON.parse(localStorage.getItem("userDecksList") || "[]");
+  userDecks.push(newDeck);
+  localStorage.setItem("userDecksList", JSON.stringify(userDecks));
+
+  // Initialize empty cards list for this new deck
+  var storedCards = JSON.parse(localStorage.getItem("customFlashcards") || "{}");
+  storedCards[newDeck.id] = [];
+  localStorage.setItem("customFlashcards", JSON.stringify(storedCards));
+
+  closeCreateDeckModal();
+  initDeckData();
+  updateDashboardStats();
+}
+
+function deleteDeck(deckId) {
+  if (!confirm("Are you sure you want to delete this custom deck?")) return;
+
+  var userDecks = JSON.parse(localStorage.getItem("userDecksList") || "[]");
+  userDecks = userDecks.filter(function(deck) {
+    return deck.id !== deckId;
+  });
+  localStorage.setItem("userDecksList", JSON.stringify(userDecks));
+
+  // Remove cards belonging to this deck
+  var storedCards = JSON.parse(localStorage.getItem("customFlashcards") || "{}");
+  delete storedCards[deckId];
+  localStorage.setItem("customFlashcards", JSON.stringify(storedCards));
+
+  initDeckData();
+  updateDashboardStats();
+}
+
 function startStudy(deckId, deckTitle) {
   localStorage.setItem("activeDeckId", deckId);
   localStorage.setItem("activeDeckTitle", deckTitle || "Flashcard Session");
   window.location.href = "study.html";
 }
 
-// 6. Logout Handler
 function handleLogout() {
   localStorage.removeItem("isLoggedIn");
   localStorage.removeItem("userAccount");

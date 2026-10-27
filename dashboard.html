@@ -1,64 +1,62 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard - FlashLearn</title>
-    <link
-      rel="icon"
-      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>"
-    />
-    <link rel="stylesheet" href="CSS/style.css" />
-    <link rel="stylesheet" href="CSS/responsive.css" />
-  </head>
-  <body>
-    <!-- Navigation Bar -->
-    <header>
-      <nav class="navbar">
-        <div class="logo">⚡ FlashLearn</div>
-        <ul class="nav-links">
-          <li><a href="index.html">Home</a></li>
-          <li><a href="dashboard.html" class="active">Dashboard</a></li>
-          <li><a href="study.html">Study</a></li>
-          <li>
-            <button onclick="handleLogout()" class="btn btn-secondary">
-              Logout
-            </button>
-          </li>
-        </ul>
-      </nav>
-    </header>
 
-    <main class="dashboard-container">
-      <!-- User Stats Section -->
-      <section class="user-banner">
-        <div>
-          <h2 id="userGreeting">Welcome back, Student!</h2>
-          <p>Ready to practice your flashcards today?</p>
-        </div>
-        <div class="stats-row">
-          <div class="stat-badge">
-            <span class="stat-num" id="totalDecksStat">6</span>
-            <span class="stat-label">Decks</span>
-          </div>
-          <div class="stat-badge">
-            <span class="stat-num" id="totalReviewedStat">0</span>
-            <span class="stat-label">Reviewed</span>
-          </div>
-          <div class="stat-badge">
-            <span class="stat-num" id="studyStreakStat">0 Days</span>
-            <span class="stat-label">Streak</span>
-          </div>
-        </div>
-      </section>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard - FlashLearn</title>
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>" />
+  <link rel="stylesheet" href="CSS/style.css" />
+  <link rel="stylesheet" href="CSS/responsive.css" />
+</head>
 
-      <!-- Search & Filter Controls -->
-      <section class="controls-bar">
-        <input
-          type="text"
-          id="searchInput"
-          placeholder="Search decks by title..."
-        />
+<body>
+  <!-- Navigation Bar -->
+  <header>
+    <nav class="navbar">
+      <div class="logo">⚡ FlashLearn</div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="dashboard.html" class="active">Dashboard</a></li>
+        <li><a href="study.html">Study</a></li>
+        <li><a href="profile.html">Profile</a></li>
+        <li>
+          <button onclick="handleLogout()" class="btn btn-secondary">
+            Logout
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="dashboard-container">
+    <!-- User Stats Section -->
+    <section class="user-banner">
+      <div>
+        <h2 id="userGreeting">Welcome back, Student!</h2>
+        <p>Ready to practice your flashcards today?</p>
+      </div>
+      <div class="stats-row">
+        <div class="stat-badge">
+          <span class="stat-num" id="totalDecksStat">6</span>
+          <span class="stat-label">Decks</span>
+        </div>
+        <div class="stat-badge">
+          <span class="stat-num" id="totalReviewedStat">0</span>
+          <span class="stat-label">Reviewed</span>
+        </div>
+        <div class="stat-badge">
+          <span class="stat-num" id="studyStreakStat">0 Days</span>
+          <span class="stat-label">Streak</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Search & Filter Controls -->
+    <section class="controls-bar">
+      <div class="search-filter-wrapper">
+        <input type="text" id="searchInput" placeholder="Search decks by title..." />
 
         <select id="categoryFilter">
           <option value="All">All Categories</option>
@@ -66,18 +64,87 @@
           <option value="Programming">Programming</option>
           <option value="Core CS">Core CS</option>
         </select>
-      </section>
+        <button class="btn btn-primary" onclick="openCreateDeckModal()"
+          style="margin-left: 0.5rem; white-space: nowrap">
+          + Create Deck
+        </button>
+      </div>
+    </section>
 
-      <!-- Decks Grid -->
-      <section class="decks-grid" id="decksContainer">
-        <!-- Cards dynamically injected by dashboard.js -->
-      </section>
-    </main>
+    <!-- Decks Grid -->
+    <section class="decks-grid" id="decksContainer">
+      <!-- Cards dynamically injected by dashboard.js -->
+    </section>
+  </main>
+  <!-- Create Deck Modal -->
+  <div id="createDeckModal" class="modal-overlay hidden" style="
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      ">
+    <div class="modal-box" style="
+          background: #ffffff;
+          padding: 2rem;
+          border-radius: 12px;
+          width: 90%;
+          max-width: 480px;
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        ">
+      <h3 style="margin-bottom: 1rem; color: #1e293b">Create New Deck</h3>
+      <form id="createDeckForm" onsubmit="handleCreateDeck(event)">
+        <div style="margin-bottom: 1rem; text-align: left">
+          <label style="display: block; font-weight: 600; margin-bottom: 0.25rem">Deck Title</label>
+          <input type="text" id="newDeckTitle" required placeholder="e.g. Operating Systems" style="
+                width: 100%;
+                padding: 0.65rem;
+                border: 1px solid #cbd5e1;
+                border-radius: 6px;
+              " />
+        </div>
+        <div style="margin-bottom: 1rem; text-align: left">
+          <label style="display: block; font-weight: 600; margin-bottom: 0.25rem">Category</label>
+          <select id="newDeckCategory" style="
+                width: 100%;
+                padding: 0.65rem;
+                border: 1px solid #cbd5e1;
+                border-radius: 6px;
+              ">
+            <option value="Web Development">Web Development</option>
+            <option value="Programming">Programming</option>
+            <option value="Core CS">Core CS</option>
+          </select>
+        </div>
+        <div style="margin-bottom: 1.5rem; text-align: left">
+          <label style="display: block; font-weight: 600; margin-bottom: 0.25rem">Description</label>
+          <textarea id="newDeckDesc" rows="3" required placeholder="Short summary of this deck..." style="
+                width: 100%;
+                padding: 0.65rem;
+                border: 1px solid #cbd5e1;
+                border-radius: 6px;
+              "></textarea>
+        </div>
+        <div style="display: flex; gap: 0.75rem; justify-content: flex-end">
+          <button type="button" class="btn btn-secondary" onclick="closeCreateDeckModal()"
+            style="padding: 0.6rem 1.2rem">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary" style="padding: 0.6rem 1.2rem">
+            Save Deck
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-    <footer>
-      <p>Developed by Team <strong>WebNova</strong> | CSE326 CA1 Project</p>
-    </footer>
+  <footer>
+    <p>Developed by Team <strong>WebNova</strong> | CSE326 CA1 Project</p>
+  </footer>
 
-    <script src="JS/dashboard.js"></script>
-  </body>
+  <script src="JS/dashboard.js"></script>
+</body>
+
 </html>
