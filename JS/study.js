@@ -133,11 +133,24 @@ function loadActiveDeck() {
     currentDeckId = savedDeckId;
   }
 
-  // Study page par Deck ka Title dikhana
-  var savedTitle = localStorage.getItem("activeDeckTitle") || "Flashcard Session";
+  // Title ID se dhoondho (Apostrophe ya direct click issue solve)
+  var defaultTitles = {
+    "1": "HTML Fundamentals",
+    "2": "CSS Box Model & Flexbox",
+    "3": "JavaScript Core Concepts",
+    "4": "Computer Networking Basics",
+    "5": "Data Structures Basics",
+    "6": "SQL & Database Essentials"
+  };
+
+  var userDecks = JSON.parse(localStorage.getItem("userDecksList") || "[]");
+  var userDeck = userDecks.find(function(d) { return d.id === currentDeckId; });
+
+  var resolvedTitle = defaultTitles[currentDeckId] || (userDeck ? userDeck.title : "Flashcard Session");
+
   var headingElement = document.getElementById("currentDeckHeading");
   if (headingElement) {
-    headingElement.innerText = "Studying: " + savedTitle;
+    headingElement.innerText = "Studying: " + resolvedTitle;
   }
 
   // Check if custom deck cards exist in localStorage
@@ -162,6 +175,13 @@ function loadCard(index) {
   var cardElement = document.getElementById("flashcardElement");
   cardElement.classList.remove("is-flipped");
   isFlipped = false;
+  // Empty deck guard
+    if (!currentDeckCards || currentDeckCards.length === 0) {
+      document.getElementById("cardQuestion").innerText = "Is deck mein abhi koi card nahi hai.";
+      document.getElementById("cardAnswer").innerText = "Neeche '+ Add Card' daba kar naya card jodiye.";
+      document.getElementById("cardIndicator").innerText = "Card 0 of 0";
+      return;
+    }
 
   var currentCard = currentDeckCards[index];
   document.getElementById("cardQuestion").innerText = currentCard.question;

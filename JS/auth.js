@@ -60,11 +60,11 @@ var assignedRole = usersList.length === 0 ? "admin" : "user";
 var newUser = {
   name: name,
   email: email,
-  password: password, // Frontend project limitation (plain text)
+  password: pass, // Frontend project limitation (plain text)
   role: assignedRole
 };
-usersList.push(newUser);
-localStorage.setItem("usersList", JSON.stringify(usersList));
+users.push(newUser);
+localStorage.setItem("usersList", JSON.stringify(users));
 
 // Session me password mat dalo
 var sessionUser = {

@@ -24,7 +24,7 @@ An interactive, responsive client-side web application designed to enhance learn
 
 - **Dynamic Greeting & User Onboarding:** Personalizes the dashboard using `localStorage` user profile sessions.
 - **6 Domain-Specific Decks:** Covers core topics including HTML, CSS Box Model, JavaScript, Networking Basics, Data Structures, and SQL.
-- **Deck Management (CRUD):** Create new custom decks via modal and delete them anytime with dynamic UI updates.
+- **Deck Management (Create,View,Delete,Add Cards):** Create new custom decks via modal and delete them anytime with dynamic UI updates.
 - **Deck-Wise Persistent Progress:** Live status badges on each deck card (`Not Started`, `In Progress`, `Completed`) saved across reloads.
 - **Study Streak Tracker:** Calculates continuous daily study streak based on local calendar dates.
 - **User Profile Page:** Dedicated profile view displaying account information, study statistics, and in-place name editing.

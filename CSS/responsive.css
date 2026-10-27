@@ -58,3 +58,21 @@
     justify-content: center;
   }
 }
+
+@media (max-width: 480px) {
+  /* Navbar links side-scroll fix */
+  .nav-links {
+    gap: 0.4rem !important;
+  }
+
+  .nav-links a, 
+  .nav-links button {
+    font-size: 0.78rem !important;
+    padding: 0.3rem 0.4rem !important;
+  }
+
+  .navbar {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+}

@@ -150,7 +150,11 @@ function renderDecks(decksToDisplay) {
       <p>${deck.desc}</p>
       <div class="deck-footer">
         <span class="card-count">${deck.cardCount} Cards</span>
-        <button class="btn btn-primary" onclick="startStudy('${deck.id}', '${deck.title}')">Study Now</button>
+        ${
+  localStorage.getItem("progress_" + deck.id + (JSON.parse(localStorage.getItem("userAccount") || "{}").email ? "_" + JSON.parse(localStorage.getItem("userAccount") || "{}").email : ""))
+    ? `<button class="btn btn-primary" onclick="startStudy('${deck.id}')">Study Now</button>`
+    : `<button class="btn btn-primary" onclick="enrollDeck('${deck.id}')">Enroll</button>`
+}
       </div>
     `;
 
@@ -246,9 +250,8 @@ function deleteDeck(deckId) {
   updateDashboardStats();
 }
 
-function startStudy(deckId, deckTitle) {
+function startStudy(deckId) {
   localStorage.setItem("activeDeckId", deckId);
-  localStorage.setItem("activeDeckTitle", deckTitle || "Flashcard Session");
   window.location.href = "study.html";
 }
 
@@ -256,4 +259,14 @@ function handleLogout() {
   localStorage.removeItem("isLoggedIn");
   localStorage.removeItem("userAccount");
   window.location.href = "auth.html";
+}
+
+// Deck enrollment function
+function enrollDeck(deckId) {
+  var activeUser = JSON.parse(localStorage.getItem("userAccount") || "{}");
+  var userKey = activeUser.email ? "_" + activeUser.email : "";
+  var progressKey = "progress_" + deckId + userKey;
+
+  localStorage.setItem(progressKey, "Not Started");
+  renderDecks(); // cards refresh honge aur Study Now button dikh jayega
 }

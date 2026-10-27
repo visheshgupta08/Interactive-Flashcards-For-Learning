@@ -30,13 +30,36 @@ function loadProfileData() {
 
   // 2. Personal Analytics Load Karna
   var reviewedCount = localStorage.getItem("cardsReviewed" + userKey) || "0";
-  var streakCount = localStorage.getItem("studyStreak" + userKey) || "0";
-
   var reviewedEl = document.getElementById("userCardsReviewed");
-  var streakEl = document.getElementById("userStreak");
-
   if (reviewedEl) reviewedEl.innerText = reviewedCount;
-  if (streakEl) streakEl.innerText = streakCount + (streakCount === "1" ? " Day" : " Days");
+  
+  var streakEl = document.getElementById("userStreak");
+  var streakKey = "studyStreak" + userKey;
+  var lastDateKey = "lastStudyDate" + userKey;
+
+  var currentStreak = parseInt(localStorage.getItem(streakKey) || "0", 10);
+  var lastDateStr = localStorage.getItem(lastDateKey);
+
+  if (lastDateStr) {
+    var today = new Date();
+    var lastDate = new Date(lastDateStr);
+
+    today.setHours(0, 0, 0, 0);
+    lastDate.setHours(0, 0, 0, 0);
+
+    var diffDays = Math.round((today - lastDate) / (1000 * 60 * 60 * 24));
+
+    if (diffDays > 1) {
+      currentStreak = 0;
+      localStorage.setItem(streakKey, "0");
+    }
+  } else {
+    currentStreak = 0;
+  }
+
+  if (streakEl) {
+    streakEl.innerText = currentStreak + (currentStreak === 1 ? " Day" : " Days");
+  }
 }
 
 // 3. Name update karne ka handler
