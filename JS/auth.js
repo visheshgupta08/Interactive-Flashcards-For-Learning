@@ -54,21 +54,26 @@ function handleSignup(event) {
     return;
   }
 
-  // 3. Naya user create karo (Pehla user automatic admin)
-  var newUser = {
-    name: name,
-    email: email,
-    password: pass,
-    role: "user"
-  };
+  // Pehla user automatic admin, baaki regular users
+var assignedRole = usersList.length === 0 ? "admin" : "user";
 
-  // 4. Array mein push karo aur save karo
-  users.push(newUser);
-  localStorage.setItem("usersList", JSON.stringify(users));
+var newUser = {
+  name: name,
+  email: email,
+  password: password, // Frontend project limitation (plain text)
+  role: assignedRole
+};
+usersList.push(newUser);
+localStorage.setItem("usersList", JSON.stringify(usersList));
 
-  // 5. Active session set karo (backward compatibility ke sath)
-  localStorage.setItem("userAccount", JSON.stringify(newUser));
-  localStorage.setItem("isLoggedIn", "true");
+// Session me password mat dalo
+var sessionUser = {
+  name: newUser.name,
+  email: newUser.email,
+  role: newUser.role
+};
+localStorage.setItem("userAccount", JSON.stringify(sessionUser));
+localStorage.setItem("isLoggedIn", "true");
 
   msg.innerText = "Account created successfully! Redirecting...";
   msg.style.color = "green";
@@ -111,7 +116,12 @@ function handleLogin(event) {
 
   if (foundUser) {
     localStorage.setItem("isLoggedIn", "true");
-    localStorage.setItem("userAccount", JSON.stringify(foundUser)); // active session user
+    var sessionUser = {
+      name: foundUser.name,
+      email: foundUser.email,
+      role: foundUser.role
+    };
+    localStorage.setItem("userAccount", JSON.stringify(sessionUser));
     msg.innerText = "Welcome back, " + foundUser.name + "! Redirecting...";
     msg.style.color = "green";
 
