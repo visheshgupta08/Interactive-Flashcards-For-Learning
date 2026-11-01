@@ -23,7 +23,7 @@ var defaultDecks = [
 
 var allDecksList = [];
 
-window.onload = function() {
+window.onload = function () {
   loadUserProfile();
   initDeckData();
   updateDashboardStats();
@@ -51,7 +51,7 @@ function initDeckData() {
   if (storedCustomCards) {
     try {
       var parsedCards = JSON.parse(storedCustomCards);
-      allDecksList.forEach(function(deck) {
+      allDecksList.forEach(function (deck) {
         if (parsedCards[deck.id] && Array.isArray(parsedCards[deck.id])) {
           deck.cardCount = parsedCards[deck.id].length;
         }
@@ -116,29 +116,36 @@ function renderDecks(decksToDisplay) {
     return;
   }
 
-  decksToDisplay.forEach(function(deck) {
+  var activeUser = JSON.parse(localStorage.getItem("userAccount") || "{}");
+  var userKey = activeUser.email ? "_" + activeUser.email : "";
+
+  decksToDisplay.forEach(function (deck) {
     var cardDiv = document.createElement("div");
     cardDiv.className = "deck-card";
     cardDiv.setAttribute("data-category", deck.category);
 
-    var activeUser = JSON.parse(localStorage.getItem("userAccount") || "{}");
-    var userKey = activeUser.email ? "_" + activeUser.email : "";
-    var deckStatus = localStorage.getItem("progress_" + deck.id + userKey) || "Not Enrolled";
+    var deckProgress = localStorage.getItem("progress_" + deck.id + userKey);
+    var isEnrolled = !!deckProgress;
+    var deckStatus = deckProgress || "Not Enrolled";
 
-    // Status ke hisaab se color
-    var badgeColor = "#64748b"; // gray for Not Started
+    // Status ke hisaab se badge color
+    var badgeColor = "#64748b";
     var badgeBg = "#f1f5f9";
     if (deckStatus === "In Progress") {
-      badgeColor = "#d97706"; // amber
+      badgeColor = "#d97706";
       badgeBg = "#fef3c7";
     } else if (deckStatus === "Completed") {
-      badgeColor = "#16a34a"; // green
+      badgeColor = "#16a34a";
       badgeBg = "#dcfce7";
     }
 
-    var deleteBtnHtml = deck.isCustom 
+    var deleteBtnHtml = deck.isCustom
       ? `<button onclick="deleteDeck('${deck.id}')" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.85rem; margin-left: auto;">🗑 Delete</button>`
       : "";
+
+    var actionBtnHtml = isEnrolled
+      ? `<button class="btn btn-primary" onclick="startStudy('${deck.id}')">Study Now</button>`
+      : `<button class="btn btn-primary" onclick="enrollDeck('${deck.id}')">Enroll</button>`;
 
     cardDiv.innerHTML = `
       <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
@@ -150,11 +157,7 @@ function renderDecks(decksToDisplay) {
       <p>${deck.desc}</p>
       <div class="deck-footer">
         <span class="card-count">${deck.cardCount} Cards</span>
-        ${
-  localStorage.getItem("progress_" + deck.id + (JSON.parse(localStorage.getItem("userAccount") || "{}").email ? "_" + JSON.parse(localStorage.getItem("userAccount") || "{}").email : ""))
-    ? `<button class="btn btn-primary" onclick="startStudy('${deck.id}')">Study Now</button>`
-    : `<button class="btn btn-primary" onclick="enrollDeck('${deck.id}')">Enroll</button>`
-}
+        ${actionBtnHtml}
       </div>
     `;
 
@@ -170,7 +173,7 @@ function setupFilterEvents() {
     var query = searchInput ? searchInput.value.toLowerCase().trim() : "";
     var selectedCategory = categoryFilter ? categoryFilter.value : "All";
 
-    var filtered = allDecksList.filter(function(deck) {
+    var filtered = allDecksList.filter(function (deck) {
       var matchesSearch = deck.title.toLowerCase().includes(query) || deck.desc.toLowerCase().includes(query);
       var matchesCategory = selectedCategory === "All" || deck.category === selectedCategory;
       return matchesSearch && matchesCategory;
@@ -236,7 +239,7 @@ function deleteDeck(deckId) {
   if (!confirm("Are you sure you want to delete this custom deck?")) return;
 
   var userDecks = JSON.parse(localStorage.getItem("userDecksList") || "[]");
-  userDecks = userDecks.filter(function(deck) {
+  userDecks = userDecks.filter(function (deck) {
     return deck.id !== deckId;
   });
   localStorage.setItem("userDecksList", JSON.stringify(userDecks));
@@ -262,5 +265,5 @@ function enrollDeck(deckId) {
   var progressKey = "progress_" + deckId + userKey;
 
   localStorage.setItem(progressKey, "Not Started");
-  renderDecks(allDecksList); // cards refresh honge aur Study Now button dikh jayega
+  renderDecks(allDecksList);
 }

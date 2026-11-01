@@ -13,7 +13,7 @@ if (!activeDeckId) {
 // Session mein kaunse cards padhe ja chuke hain unko track karne ke liye
 var reviewedCardIndices = [];
 
-// Helper function: Local Indian Timezone (YYYY-MM-DD) date string
+// Helper function: Local Date (YYYY-MM-DD) string
 function getLocalDateString(d) {
   var date = d || new Date();
   var year = date.getFullYear();
@@ -24,17 +24,15 @@ function getLocalDateString(d) {
 
 // Analytics Tracker: User-specific review counts aur streak localStorage mein update karna
 function trackCardReview() {
-  // 1. Check karo ki yeh card is session mein pehle review hua ya nahi
   if (reviewedCardIndices.indexOf(currentIndex) !== -1) {
-    return; // Already counted, dobara count mat badhao
+    return;
   }
   reviewedCardIndices.push(currentIndex);
 
-  // 2. Active logged-in user nikalo
   var activeUser = JSON.parse(localStorage.getItem("userAccount") || "{}");
   var userKey = activeUser.email ? "_" + activeUser.email : "";
 
-  // 3. User-specific cards reviewed count update
+  // User-specific cards reviewed count update
   var countKey = "cardsReviewed" + userKey;
   var count = parseInt(localStorage.getItem(countKey) || "0", 10);
   localStorage.setItem(countKey, (count + 1).toString());
@@ -45,7 +43,7 @@ function trackCardReview() {
     localStorage.setItem(progressKey, "In Progress");
   }
 
-  // 4. User-specific daily streak update (Date-based tracking)
+  // User-specific daily streak update (Date-based tracking)
   var today = getLocalDateString();
   var lastDateKey = "lastStudyDate" + userKey;
   var streakKey = "studyStreak" + userKey;
@@ -61,7 +59,7 @@ function trackCardReview() {
     if (lastDate === yesterdayStr) {
       currentStreak += 1;
     } else {
-      currentStreak = 1; // Streak fresh start
+      currentStreak = 1;
     }
 
     localStorage.setItem(streakKey, currentStreak.toString());
@@ -69,7 +67,7 @@ function trackCardReview() {
   }
 }
 
-// Default seed flashcards mapped by Deck ID (Ab poore 6 Decks)
+// Default seed flashcards mapped by Deck ID
 var defaultCards = {
   1: [
     { question: "What does HTML stand for?", answer: "HyperText Markup Language" },
@@ -115,22 +113,11 @@ var currentDeckId = "1";
 var currentIndex = 0;
 var isFlipped = false;
 var masteredCount = 0;
+var cardProgress = {};
 
-window.onload = function() {
+window.onload = function () {
   loadActiveDeck();
-  setupKeyboardNavigation(); // Keyboard controls ON
-
-  // Navbar Login/Logout toggle logic
-  var navAuth = document.getElementById("navAuthLink");
-  if (navAuth && localStorage.getItem("isLoggedIn") === "true") {
-    navAuth.innerText = "Logout";
-    navAuth.href = "#";
-    navAuth.onclick = function() {
-      localStorage.removeItem("isLoggedIn");
-      localStorage.removeItem("userAccount");
-      window.location.href = "auth.html";
-    };
-  }
+  setupKeyboardNavigation();
 };
 
 // Load cards from LocalStorage or Fallback to Default Seeds
@@ -140,7 +127,6 @@ function loadActiveDeck() {
     currentDeckId = savedDeckId;
   }
 
-  // Title ID se dhoondho (Apostrophe ya direct click issue solve)
   var defaultTitles = {
     "1": "HTML Fundamentals",
     "2": "CSS Box Model & Flexbox",
@@ -151,7 +137,7 @@ function loadActiveDeck() {
   };
 
   var userDecks = JSON.parse(localStorage.getItem("userDecksList") || "[]");
-  var userDeck = userDecks.find(function(d) { return d.id === currentDeckId; });
+  var userDeck = userDecks.find(function (d) { return d.id === currentDeckId; });
 
   var resolvedTitle = defaultTitles[currentDeckId] || (userDeck ? userDeck.title : "Flashcard Session");
 
@@ -160,7 +146,6 @@ function loadActiveDeck() {
     headingElement.innerText = "Studying: " + resolvedTitle;
   }
 
-  // Check if custom deck cards exist in localStorage
   var storedCustomDecks = localStorage.getItem("customFlashcards");
   var allDecks = defaultCards;
 
@@ -173,7 +158,8 @@ function loadActiveDeck() {
   currentDeckCards = allDecks[currentDeckId] || defaultCards[currentDeckId] || [];
   currentIndex = 0;
   masteredCount = 0;
-  reviewedCardIndices = []; // Naye deck ya session ke liye reset
+  cardProgress = {};
+  reviewedCardIndices = [];
   loadCard(currentIndex);
 }
 
@@ -182,13 +168,20 @@ function loadCard(index) {
   var cardElement = document.getElementById("flashcardElement");
   cardElement.classList.remove("is-flipped");
   isFlipped = false;
+
+  var prevBtn = document.getElementById("prevBtn");
+  var nextBtn = document.getElementById("nextBtn");
+
   // Empty deck guard
-    if (!currentDeckCards || currentDeckCards.length === 0) {
-      document.getElementById("cardQuestion").innerText = "Is deck mein abhi koi card nahi hai.";
-      document.getElementById("cardAnswer").innerText = "Neeche '+ Add Card' daba kar naya card jodiye.";
-      document.getElementById("cardIndicator").innerText = "Card 0 of 0";
-      return;
-    }
+  if (!currentDeckCards || currentDeckCards.length === 0) {
+    document.getElementById("cardQuestion").innerText = "No cards available in this deck yet.";
+    document.getElementById("cardAnswer").innerText = "Click '+ Add Card' above to create one.";
+    document.getElementById("cardIndicator").innerText = "Card 0 of 0";
+    document.getElementById("progressBarFill").style.width = "0%";
+    if (prevBtn) prevBtn.disabled = true;
+    if (nextBtn) nextBtn.disabled = true;
+    return;
+  }
 
   var currentCard = currentDeckCards[index];
   document.getElementById("cardQuestion").innerText = currentCard.question;
@@ -201,39 +194,38 @@ function loadCard(index) {
   var progressPercent = (currentDisplay / totalDisplay) * 100;
   document.getElementById("progressBarFill").style.width = progressPercent + "%";
 
-  var prevBtn = document.getElementById("prevBtn");
-  if (index === 0) {
-    prevBtn.disabled = true;
-    prevBtn.style.opacity = "0.5";
-  } else {
-    prevBtn.disabled = false;
-    prevBtn.style.opacity = "1";
+  if (prevBtn) {
+    prevBtn.disabled = index === 0;
+    prevBtn.style.opacity = index === 0 ? "0.5" : "1";
+  }
+  if (nextBtn) {
+    nextBtn.disabled = false;
+    nextBtn.style.opacity = "1";
   }
 }
 
 // Flip Card Action
 function flipCard() {
-  if (!currentDeckCards || currentDeckCards.length == 0) return;
+  if (!currentDeckCards || currentDeckCards.length === 0) return;
   var cardElement = document.getElementById("flashcardElement");
   cardElement.classList.toggle("is-flipped");
   isFlipped = !isFlipped;
 
-  // Jab card reveal hota hai tab uniquely review track karo
   if (isFlipped) {
     trackCardReview();
   }
 }
 
-// Next Card smoothly handle flipping
+// Next Card
 function nextCard() {
-  if (!currentDeckCards || currentDeckCards.length == 0) return;
+  if (!currentDeckCards || currentDeckCards.length === 0) return;
   if (currentIndex < currentDeckCards.length - 1) {
     var cardElement = document.getElementById("flashcardElement");
 
     if (isFlipped) {
       cardElement.classList.remove("is-flipped");
       isFlipped = false;
-      setTimeout(function() {
+      setTimeout(function () {
         currentIndex = currentIndex + 1;
         loadCard(currentIndex);
       }, 300);
@@ -246,7 +238,7 @@ function nextCard() {
   }
 }
 
-// Previous Card smoothly handle flipping
+// Previous Card
 function prevCard() {
   if (currentIndex > 0) {
     var cardElement = document.getElementById("flashcardElement");
@@ -254,7 +246,7 @@ function prevCard() {
     if (isFlipped) {
       cardElement.classList.remove("is-flipped");
       isFlipped = false;
-      setTimeout(function() {
+      setTimeout(function () {
         currentIndex = currentIndex - 1;
         loadCard(currentIndex);
       }, 300);
@@ -265,14 +257,11 @@ function prevCard() {
   }
 }
 
-// Har card ka recall status track karna
-var cardProgress = {};
-
+// Recall Difficulty Tracker
 function recordRecall(level) {
-  if (!currentDeckCards || currentDeckCards.length == 0) return;
+  if (!currentDeckCards || currentDeckCards.length === 0) return;
   cardProgress[currentIndex] = level;
 
-  // Har card index par sirf ek baar mastered count hoga
   masteredCount = 0;
   for (var key in cardProgress) {
     if (cardProgress[key] === "easy") {
@@ -280,15 +269,13 @@ function recordRecall(level) {
     }
   }
 
-  // Answer submit hone par bhi count track karo agar flip nahi kiya ho
   trackCardReview();
-
   nextCard();
 }
 
-// Keyboard Shortcuts (Spacebar se flip, Arrow keys se Next/Prev)
+// Keyboard Shortcuts (Space to flip, Arrows for Next/Prev)
 function setupKeyboardNavigation() {
-  document.addEventListener("keydown", function(e) {
+  document.addEventListener("keydown", function (e) {
     var modal = document.getElementById("addCardModal");
     if (modal && !modal.classList.contains("hidden")) return;
 
@@ -312,7 +299,7 @@ function showSummary() {
   var summaryModal = document.getElementById("summaryModal");
   summaryModal.classList.remove("hidden");
 
-  document.getElementById("summaryScore").innerText = 
+  document.getElementById("summaryScore").innerText =
     "You completed all " + currentDeckCards.length + " cards! Mastered: " + masteredCount;
 
   var activeUser = JSON.parse(localStorage.getItem("userAccount") || "{}");
@@ -324,8 +311,8 @@ function showSummary() {
 function restartSession() {
   currentIndex = 0;
   masteredCount = 0;
-  cardProgress = {}; // Reset tracking
-  reviewedCardIndices = []; // Reset reviewed cards tracking
+  cardProgress = {};
+  reviewedCardIndices = [];
   document.querySelector(".flashcard-scene").classList.remove("hidden");
   document.querySelector(".difficulty-controls").classList.remove("hidden");
   document.querySelector(".nav-controls").classList.remove("hidden");
@@ -345,13 +332,13 @@ function closeAddCardModal() {
   document.getElementById("newAnswer").value = "";
 }
 
-// Toast Notification popup
+// Toast Notification
 function showToast(message) {
   var toast = document.getElementById("toast");
   if (!toast) return;
   toast.innerText = message;
   toast.classList.remove("hidden");
-  setTimeout(function() {
+  setTimeout(function () {
     toast.classList.add("hidden");
   }, 2200);
 }
@@ -366,7 +353,6 @@ function handleAddNewCard(event) {
   if (!questionInput || !answerInput) return;
 
   var newCard = { question: questionInput, answer: answerInput };
-
   var storedCustomDecks = JSON.parse(localStorage.getItem("customFlashcards")) || defaultCards;
 
   if (!storedCustomDecks[currentDeckId]) {
@@ -379,8 +365,8 @@ function handleAddNewCard(event) {
   currentDeckCards = storedCustomDecks[currentDeckId];
 
   closeAddCardModal();
-  loadCard(currentDeckCards.length - 1);
   currentIndex = currentDeckCards.length - 1;
+  loadCard(currentIndex);
 
   showToast("Flashcard added successfully!");
 }

@@ -3,7 +3,7 @@ if (localStorage.getItem("isLoggedIn") !== "true") {
   window.location.href = "auth.html";
 }
 
-window.onload = function() {
+window.onload = function () {
   loadProfileData();
 };
 
@@ -11,7 +11,7 @@ function loadProfileData() {
   var activeUser = JSON.parse(localStorage.getItem("userAccount") || "{}");
   var userKey = activeUser.email ? "_" + activeUser.email : "";
 
-  // 1. Basic Info Populate Karna
+  // Basic Info Populate Karna
   var nameEl = document.getElementById("profileDisplayName");
   var emailInput = document.getElementById("profileEmail");
   var nameInput = document.getElementById("profileNameInput");
@@ -28,11 +28,11 @@ function loadProfileData() {
   if (initialEl) initialEl.innerText = displayName.charAt(0).toUpperCase();
   if (roleText) roleText.innerText = displayRole === "admin" ? "Administrator" : "Learner Account";
 
-  // 2. Personal Analytics Load Karna
+  // Personal Analytics Load Karna
   var reviewedCount = localStorage.getItem("cardsReviewed" + userKey) || "0";
   var reviewedEl = document.getElementById("userCardsReviewed");
   if (reviewedEl) reviewedEl.innerText = reviewedCount;
-  
+
   var streakEl = document.getElementById("userStreak");
   var streakKey = "studyStreak" + userKey;
   var lastDateKey = "lastStudyDate" + userKey;
@@ -62,7 +62,7 @@ function loadProfileData() {
   }
 }
 
-// 3. Name update karne ka handler
+// 2. Name update karne ka handler
 function handleUpdateProfile(event) {
   event.preventDefault();
 
@@ -92,15 +92,8 @@ function handleUpdateProfile(event) {
   var toast = document.getElementById("profileToast");
   if (toast) {
     toast.style.display = "block";
-    setTimeout(function() {
+    setTimeout(function () {
       toast.style.display = "none";
     }, 2500);
   }
-}
-
-// 4. Logout handler
-function handleLogout() {
-  localStorage.removeItem("isLoggedIn");
-  localStorage.removeItem("userAccount");
-  window.location.href = "auth.html";
 }
