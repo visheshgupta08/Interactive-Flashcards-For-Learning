@@ -1,3 +1,10 @@
+function handleLogout() {
+  localStorage.removeItem("isLoggedIn");
+  localStorage.removeItem("userAccount");
+  localStorage.removeItem("activeDeckId");
+  window.location.href = "index.html";
+}
+
 // Navbar: login ke baad "Login / Sign Up" ki jagah "Logout" dikhao
 var navAuth = document.getElementById("navAuthLink");
 

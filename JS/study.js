@@ -4,7 +4,7 @@ if (localStorage.getItem("isLoggedIn") !== "true") {
 }
 
 // Deck Guard: Agar bina deck select kiye study page khola toh Dashboard wapas bhejo
-var activeDeckId = localStorage.getItem("currentDeckId");
+var activeDeckId = localStorage.getItem("activeDeckId");
 if (!activeDeckId) {
   alert("Please select a deck from the Dashboard to study!");
   window.location.href = "dashboard.html";

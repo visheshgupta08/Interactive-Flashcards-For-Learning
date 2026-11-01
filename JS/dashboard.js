@@ -255,12 +255,6 @@ function startStudy(deckId) {
   window.location.href = "study.html";
 }
 
-function handleLogout() {
-  localStorage.removeItem("isLoggedIn");
-  localStorage.removeItem("userAccount");
-  window.location.href = "auth.html";
-}
-
 // Deck enrollment function
 function enrollDeck(deckId) {
   var activeUser = JSON.parse(localStorage.getItem("userAccount") || "{}");
