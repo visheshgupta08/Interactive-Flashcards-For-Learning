@@ -123,7 +123,7 @@ function renderDecks(decksToDisplay) {
 
     var activeUser = JSON.parse(localStorage.getItem("userAccount") || "{}");
     var userKey = activeUser.email ? "_" + activeUser.email : "";
-    var deckStatus = localStorage.getItem("progress_" + deck.id + userKey) || "Not Started";
+    var deckStatus = localStorage.getItem("progress_" + deck.id + userKey) || "Not Enrolled";
 
     // Status ke hisaab se color
     var badgeColor = "#64748b"; // gray for Not Started
@@ -268,5 +268,5 @@ function enrollDeck(deckId) {
   var progressKey = "progress_" + deckId + userKey;
 
   localStorage.setItem(progressKey, "Not Started");
-  renderDecks(); // cards refresh honge aur Study Now button dikh jayega
+  renderDecks(allDecksList); // cards refresh honge aur Study Now button dikh jayega
 }

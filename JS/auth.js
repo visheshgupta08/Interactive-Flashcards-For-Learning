@@ -55,7 +55,7 @@ function handleSignup(event) {
   }
 
   // Pehla user automatic admin, baaki regular users
-var assignedRole = usersList.length === 0 ? "admin" : "user";
+var assignedRole = users.length === 0 ? "admin" : "user";
 
 var newUser = {
   name: name,

@@ -3,6 +3,13 @@ if (localStorage.getItem("isLoggedIn") !== "true") {
   window.location.href = "auth.html";
 }
 
+// Deck Guard: Agar bina deck select kiye study page khola toh Dashboard wapas bhejo
+var activeDeckId = localStorage.getItem("currentDeckId");
+if (!activeDeckId) {
+  alert("Please select a deck from the Dashboard to study!");
+  window.location.href = "dashboard.html";
+}
+
 // Session mein kaunse cards padhe ja chuke hain unko track karne ke liye
 var reviewedCardIndices = [];
 
@@ -206,6 +213,7 @@ function loadCard(index) {
 
 // Flip Card Action
 function flipCard() {
+  if (!currentDeckCards || currentDeckCards.length == 0) return;
   var cardElement = document.getElementById("flashcardElement");
   cardElement.classList.toggle("is-flipped");
   isFlipped = !isFlipped;
@@ -218,6 +226,7 @@ function flipCard() {
 
 // Next Card smoothly handle flipping
 function nextCard() {
+  if (!currentDeckCards || currentDeckCards.length == 0) return;
   if (currentIndex < currentDeckCards.length - 1) {
     var cardElement = document.getElementById("flashcardElement");
 
@@ -260,6 +269,7 @@ function prevCard() {
 var cardProgress = {};
 
 function recordRecall(level) {
+  if (!currentDeckCards || currentDeckCards.length == 0) return;
   cardProgress[currentIndex] = level;
 
   // Har card index par sirf ek baar mastered count hoga
